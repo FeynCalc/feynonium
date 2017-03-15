@@ -1,0 +1,29 @@
+(* :Title: FMToStandardSpinorChains.test														*)
+
+(*
+	This software is covered by the GNU General Public License 3.
+	Copyright (C) 2015 Vladyslav Shtabovenko
+*)
+
+(* :Summary:  Framework independent unit tests for FMSharedObjects	*)
+
+(* ------------------------------------------------------------------------ *)
+
+Tests`Shared`FMSharedObjects =
+({
+{"FMSharedObjects-ID1",
+"FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, TIndex[], TIndex[]]",
+"0"},
+{"FMSharedObjects-ID2",
+"FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, CIndex[i],
+CIndex[i]]","0"},
+{"FMSharedObjects-ID3",
+"FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, CMomentum[p],
+CMomentum[p]]","0"},
+{"FMSharedObjects-ID4",
+"FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, CMomentum[p],TIndex[]]",
+"-FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, TIndex[],CMomentum[p]]"},
+{"FMSharedObjects-ID5",
+"FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, CIndex[i],TIndex[]]",
+"-FMStandardSpinorChain["T", 1, {p1, m1}, {p2, m2}, TIndex[],CIndex[i]]"}
+});

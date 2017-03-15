@@ -1,0 +1,90 @@
+(* :Title: FMToStandardSpinorChains.test														*)
+
+(*
+	This software is covered by the GNU General Public License 3.
+	Copyright (C) 2015 Vladyslav Shtabovenko
+*)
+
+(* :Summary:  Framework independent unit tests for FMToStandardSpinorChains	*)
+
+(* ------------------------------------------------------------------------ *)
+
+Tests`Shared`FMToStandardSpinorChains =
+({
+{"FMToStandardSpinorChains-ID1",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].SpinorV[p2,m2]]",
+"FMStandardSpinorChain[\"S\", 1, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID2",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorU[p2,m2]]",
+"FMStandardSpinorChain[\"S\", 2, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID3",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].SpinorU[p2,m2]]",
+"FMStandardSpinorChain[\"S\", 3, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID4",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorV[p2,m2]]",
+"FMStandardSpinorChain[\"S\", 4, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID5",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[5].SpinorV[p2,m2]]",
+	"FMStandardSpinorChain[\"P\", 1, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID6",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[5].SpinorU[p2,m2]]",
+	"FMStandardSpinorChain[\"P\", 2, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID7",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[5].SpinorU[p2,m2]]",
+	"FMStandardSpinorChain[\"P\", 3, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID8",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[5].SpinorV[p2,m2]]",
+	"FMStandardSpinorChain[\"P\", 4, {p1, m1}, {p2, m2}]"},
+{"FMToStandardSpinorChains-ID9",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GS[q].SpinorV[p2,m2]]",
+	"Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"V\", 1, {p1, \
+m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID10",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GS[q].SpinorU[p2,m2]]",
+	"Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"V\", 2, {p1, \
+m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID11",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GS[q].SpinorU[p2,m2]]",
+	"Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"V\", 3, {p1, \
+m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID12",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GS[q].SpinorV[p2,m2]]",
+	"Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"V\", 4, {p1, \
+m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID13",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GS[q].GA[5].SpinorV[p2,\
+m2]]", "Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"A\", 1, \
+{p1, m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID14",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GS[q].GA[5].SpinorU[p2,\
+m2]]", "Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"A\", 2, \
+{p1, m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID15",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].GS[q].GA[5].SpinorU[p2,\
+m2]]", "Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"A\", 3, \
+{p1, m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID16",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].GS[q].GA[5].SpinorV[p2,\
+m2]]", "Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"A\", 4, \
+{p1, m1}, {p2, m2}]]]"},
+{"FMToStandardSpinorChains-ID17",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[GS[q1],GS[\
+q2]].SpinorV[p2,m2]]",
+"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}][Momentum[q1], \
+Momentum[q2]]"},
+{"FMToStandardSpinorChains-ID18",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[GS[q1],GS[\
+q2]].SpinorU[p2,m2]]",
+"FMStandardSpinorChain[\"T\", 2, {p1, m1}, {p2, m2}][Momentum[q1], \
+Momentum[q2]]"},
+{"FMToStandardSpinorChains-ID19",
+"FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[GS[q1],GS[\
+q2]].SpinorU[p2,m2]]",
+"FMStandardSpinorChain[\"T\", 3, {p1, m1}, {p2, m2}][Momentum[q1], \
+Momentum[q2]]"},
+{"FMToStandardSpinorChains-ID20",
+"FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[GS[q1],GS[\
+q2]].SpinorV[p2,m2]]",
+"FMStandardSpinorChain[\"T\", 4, {p1, m1}, {p2, m2}][Momentum[q1], \
+Momentum[q2]]"}
+});
