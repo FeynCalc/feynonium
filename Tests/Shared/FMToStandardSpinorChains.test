@@ -70,21 +70,17 @@ m2]]", "Pair[Momentum[q], Momentum[FMStandardSpinorChain[\"A\", 4, \
 {"FMToStandardSpinorChains-ID17",
 "FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[GS[q1],GS[\
 q2]].SpinorV[p2,m2]]",
-"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}][Momentum[q1], \
-Momentum[q2]]"},
+"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2},Momentum[q1], Momentum[q2]]"},
 {"FMToStandardSpinorChains-ID18",
 "FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[GS[q1],GS[\
 q2]].SpinorU[p2,m2]]",
-"FMStandardSpinorChain[\"T\", 2, {p1, m1}, {p2, m2}][Momentum[q1], \
-Momentum[q2]]"},
+"FMStandardSpinorChain[\"T\", 2, {p1, m1}, {p2, m2},Momentum[q1], Momentum[q2]]"},
 {"FMToStandardSpinorChains-ID19",
 "FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[GS[q1],GS[\
 q2]].SpinorU[p2,m2]]",
-"FMStandardSpinorChain[\"T\", 3, {p1, m1}, {p2, m2}][Momentum[q1], \
-Momentum[q2]]"},
+"FMStandardSpinorChain[\"T\", 3, {p1, m1}, {p2, m2},Momentum[q1], Momentum[q2]]"},
 {"FMToStandardSpinorChains-ID20",
 "FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[GS[q1],GS[\
 q2]].SpinorV[p2,m2]]",
-"FMStandardSpinorChain[\"T\", 4, {p1, m1}, {p2, m2}][Momentum[q1], \
-Momentum[q2]]"}
+"FMStandardSpinorChain[\"T\", 4, {p1, m1}, {p2, m2},Momentum[q1], Momentum[q2]]"}
 });

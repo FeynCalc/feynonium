@@ -17,10 +17,13 @@ The value of type can be \"S\" (scalar), \"P\" (pseudoscalar), \"V\" (vector), \
 The value of i can be 1 (ubar ... v), 2 (vbar ... u), 3 ( ubar ... u) or 4 (vbar ... v). \n
 Finally p1, m1 and p2, m2 denote the mass and the momentum of the first and the last spinor respectively.";
 
+FMBlockMatrixProduct::usage="";
+
 Begin["`Package`"]
 End[]
 
 Begin["`FMSharedObjects`Private`"]
+bmtmp::usage="";
 
 DataType[FMStandardSpinorChain, FCTensor] = True;
 
@@ -86,6 +89,23 @@ FMStandardSpinorChain /:
 			Abort[]
 	]
 
+FMBlockMatrixProduct[___,0,___] :=
+	0;
+
+FMBlockMatrixProduct[x_List] :=
+	x;
+
+FMBlockMatrixProduct[x_List, y_List] :=
+	(
+		bmtmp = Inner[Dot, x, y];
+		If[	MatchQ[bmtmp, List[z_] /; FreeQ[z, List] && Length[{z}] === 1],
+			Identity @@ bmtmp,
+			bmtmp
+		]
+	);
+
+FMBlockMatrixProduct[x_List, y_List, z__List] :=
+	FMBlockMatrixProduct[x, FMBlockMatrixProduct[y, z]];
 
 
 FCPrint[1,"FMSharedObjects loaded."];
