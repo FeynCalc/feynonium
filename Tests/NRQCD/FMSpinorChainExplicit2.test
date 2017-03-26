@@ -1,0 +1,578 @@
+(* :Title: FMSpinorChainExplicit2.test														*)
+
+(*
+	This software is covered by the GNU General Public License 3.
+	Copyright (C) 2015 Vladyslav Shtabovenko
+*)
+
+(* :Summary:  Framework independent unit tests for FMSharedObjects	*)
+
+(* ------------------------------------------------------------------------ *)
+
+Tests`NRQCD`FMSpinorChainExplicit2 =
+({
+{"fcstFMSpinorChainExplicit2-ID1",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].SpinorV[p2,m2]],{p1,m1},{\
+p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].SpinorV[p2,m2]]]",
+"0"},
+{"fcstFMSpinorChainExplicit2-ID2",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[0].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[0].SpinorV[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID3",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].CGA[i].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].SpinorV[\
+p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID4",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[5].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[5].SpinorV[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID5",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[0,5].SpinorV[p2,m2]],{\
+p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[0,5].\
+SpinorV[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID6",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].CGA[i].GA[5].SpinorV[p2,m2]\
+],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].GA[\
+5].SpinorV[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID7",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
+SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
+m1].DiracSigma[CGA[i],CGA[j]].SpinorV[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID8",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorU[p2,m2]],{p1,m1},{\
+p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].SpinorU[p2,m2]]]",
+"0"},
+{"fcstFMSpinorChainExplicit2-ID9",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[0].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[0].SpinorU[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID10",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].CGA[i].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].SpinorU[\
+p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID11",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[5].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[5].SpinorU[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID12",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[0,5].SpinorU[p2,m2]],{\
+p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[0,5].\
+SpinorU[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID13",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].CGA[i].GA[5].SpinorU[p2,m2]\
+],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].GA[\
+5].SpinorU[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID14",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[TGA[],CGA[i]].\
+SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
+m1].DiracSigma[TGA[],CGA[i]].SpinorU[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID15",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
+SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
+m1].DiracSigma[CGA[i],CGA[j]].SpinorU[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID16",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorV[p2,m2]],{p1,m1},{\
+p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].SpinorV[p2,m2]]]",
+"0"},
+{"fcstFMSpinorChainExplicit2-ID17",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[0].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[0].SpinorV[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID18",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].CGA[i].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].SpinorV[\
+p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID19",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[5].SpinorV[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[5].SpinorV[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID20",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].GA[0,5].SpinorV[p2,m2]],{\
+p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[0,5].\
+SpinorV[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID21",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].CGA[i].GA[5].SpinorV[p2,m2]\
+],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].GA[\
+5].SpinorV[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID22",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[TGA[],CGA[i]].\
+SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
+m1].DiracSigma[TGA[],CGA[i]].SpinorV[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID23",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
+SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
+m1].DiracSigma[CGA[i],CGA[j]].SpinorV[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID24",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].SpinorU[p2,m2]],{p1,m1},{\
+p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].SpinorU[p2,m2]]]",
+"0"},
+{"fcstFMSpinorChainExplicit2-ID25",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[0].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[0].SpinorU[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID26",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].CGA[i].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].SpinorU[\
+p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID27",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[5].SpinorU[p2,m2]],{p1,\
+m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[5].SpinorU[\
+p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID28",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].GA[0,5].SpinorU[p2,m2]],{\
+p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[0,5].\
+SpinorU[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID29",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].CGA[i].GA[5].SpinorU[p2,m2]\
+],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].GA[\
+5].SpinorU[p2,m2]]]", "0"},
+{"fcstFMSpinorChainExplicit2-ID30",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[TGA[],CGA[i]].\
+SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
+m1].DiracSigma[TGA[],CGA[i]].SpinorU[p2,m2]]]//Simplify", "0"},
+{"fcstFMSpinorChainExplicit2-ID31",
+"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
+FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
+SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
+m1].DiracSigma[CGA[i],CGA[j]].SpinorU[p2,m2]]]//Simplify", "0"}
+});
+
+
+
+Tests`NRQCD`FMSpinorChainExplicit2Poles =
+({
+{"fcstFMSpinorChainExplicit2Poles-ID1",
+"FCSetPauliSigmaScheme[\"Naive\"]; \n (FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID2",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].GA[5].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID3",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID4",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]\
+]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
+"null"},
+{"fcstFMSpinorChainExplicit2Poles-ID5",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].GA[5].SpinorUD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID6",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].GA[5].SpinorUD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&",
+"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID7",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[TGA[],\
+CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
+#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID8",
+"((FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[CGAD[\
+i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
+//SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
+"null - ((2*I)*(CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
+D]]*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + D]]*PauliXi[-I] . \
+PauliXi[I] - CPair[CIndex[i, -1 + D], CIndex[j, -1 + \
+D]]*CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliXi[I] - I*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[ii, -1 + D], -1 + D] . \
+PauliXi[I]*Eps[CIndex[i, -1 + D], CIndex[ii, -1 + D], CMomentum[p1, \
+-1 + D]] - I*PauliXi[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
+PauliXi[I]*Eps[CIndex[i, -1 + D], CMomentum[p1, -1 + D], \
+CMomentum[p2, -1 + D]]))/(Sqrt[m1 + TPair[TIndex[], \
+TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID9",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID10",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].GA[5].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID11",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID12",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]\
+]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
+"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
+TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID13",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].GA[5].SpinorVD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID14",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].GA[5].SpinorVD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID15",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[TGA[],\
+CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
+#+null,Epsilon]&",
+"null + ((2*I)*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
+TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID16",
+"(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[CGAD[\
+i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
+//SelectFree2[#+null,Epsilon]&",
+"null - ((2*I)*(m2*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- m1*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] + \
+m1*CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CIndex[j, -1 + D], -1 + D] . PauliEta[I] - \
+m2*CPair[CIndex[i, -1 + D], CIndex[j, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I] - \
+CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I]*TPair[TIndex[], \
+TMomentum[p1]] + CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
+PauliEta[I]*TPair[TIndex[], TMomentum[p1]] + CPair[CIndex[j, -1 + D], \
+CMomentum[p1, -1 + D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 \
++ D] . PauliEta[I]*TPair[TIndex[], TMomentum[p2]] - CPair[CIndex[i, \
+-1 + D], CIndex[j, -1 + D]]*PauliXi[-I] . PauliSigma[CMomentum[p1, -1 \
++ D], -1 + D] . PauliEta[I]*TPair[TIndex[], TMomentum[p2]]))/(Sqrt[m1 \
++ TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID17",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID18",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].GA[5].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID19",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].SpinorVD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID20",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]\
+]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
+"null"},
+{"fcstFMSpinorChainExplicit2Poles-ID21",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].GA[5].SpinorVD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID22",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].GA[5].SpinorVD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&",
+"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . \
+PauliEta[I] - CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CMomentum[p1, -1 + D], -1 + D] . \
+PauliEta[I]))/(Sqrt[m1 + TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + \
+TPair[TIndex[], TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID23",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[TGA[],\
+CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
+#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID24",
+"((FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[CGAD[\
+i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
+//SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
+"null - ((2*I)*(CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
+D]]*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + D]]*PauliEta[-I] . \
+PauliEta[I] - CPair[CIndex[i, -1 + D], CIndex[j, -1 + \
+D]]*CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] \
+. PauliEta[I] - I*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[ii, -1 + D], -1 + D] . \
+PauliEta[I]*Eps[CIndex[i, -1 + D], CIndex[ii, -1 + D], CMomentum[p1, \
+-1 + D]] - I*PauliEta[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
+PauliEta[I]*Eps[CIndex[i, -1 + D], CMomentum[p1, -1 + D], \
+CMomentum[p2, -1 + D]]))/(Sqrt[m1 + TPair[TIndex[], \
+TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID25",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID26",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].GA[5].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID27",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].SpinorUD[p2,m2]]/\
+Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
+//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID28",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]\
+]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
+"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID29",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].GA[5].SpinorUD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID30",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].GA[5].SpinorUD[\
+p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
+Epsilon]&", "null"},
+{"fcstFMSpinorChainExplicit2Poles-ID31",
+"(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[TGA[],\
+CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
+#+null,Epsilon]&",
+"null + ((2*I)*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
+TMomentum[p2]]])"},
+{"fcstFMSpinorChainExplicit2Poles-ID32",
+"((FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[CGAD[\
+i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
+//SelectFree2[#+null,Epsilon]&)",
+"null - ((2*I)*(m2*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- m1*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] + \
+m1*CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CIndex[j, -1 + D], -1 + D] . PauliXi[I] - \
+m2*CPair[CIndex[i, -1 + D], CIndex[j, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I] - \
+CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I]*TPair[TIndex[], \
+TMomentum[p1]] + CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
+PauliXi[I]*TPair[TIndex[], TMomentum[p1]] + CPair[CIndex[j, -1 + D], \
+CMomentum[p1, -1 + D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], \
+-1 + D] . PauliXi[I]*TPair[TIndex[], TMomentum[p2]] - CPair[CIndex[i, \
+-1 + D], CIndex[j, -1 + D]]*PauliEta[-I] . PauliSigma[CMomentum[p1, \
+-1 + D], -1 + D] . PauliXi[I]*TPair[TIndex[], \
+TMomentum[p2]]))/(Sqrt[m1 + TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + \
+TPair[TIndex[], TMomentum[p2]]])"}
+});
+
+Tests`NRQCD`FMSpinorChainExplicit2DimCheck =
+({
+{"fcstFMSpinorChainExplicit2DimCheck-ID1",
+"FCSetPauliSigmaScheme[\"Naive\"]; \n FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].SpinorU[p2,m2]]),4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID2",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].GA[5].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[5].SpinorU[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID3",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].TGA[].SpinorU[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID4",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].SpinorU[p2,m2]]),4]]",
+	"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID5",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].GA[5].SpinorUD[p2,m2]]\
+-FMSpinorChainExplicit2[SpinorUBar[p1,m1].TGA[].GA[5].SpinorU[p2,m2]])\
+,4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID6",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].GA[5].SpinorUD[p2,\
+m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].GA[5].SpinorU[p2,\
+m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID7",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].DiracSigma[TGA[],CGAD[i]].\
+SpinorUD[p2,m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].DiracSigma[\
+TGA[],CGA[i]].SpinorU[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID8",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].DiracSigma[CGAD[i],CGAD[j]].\
+SpinorUD[p2,m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].DiracSigma[\
+CGA[i],CGA[j]].SpinorU[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID9",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].SpinorV[p2,m2]]),4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID10",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].GA[5].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].GA[5].SpinorV[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID11",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].TGA[].SpinorV[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID12",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].SpinorV[p2,m2]]),4]\
+/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID13",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].GA[5].SpinorVD[p2,m2]]\
+-FMSpinorChainExplicit2[SpinorUBar[p1,m1].TGA[].GA[5].SpinorV[p2,m2]])\
+,4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID14",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].GA[5].SpinorVD[p2,\
+m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].CGA[i].GA[5].SpinorV[p2,\
+m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID15",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].DiracSigma[TGA[],CGAD[i]].\
+SpinorVD[p2,m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].DiracSigma[\
+TGA[],CGA[i]].SpinorV[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID16",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorUBarD[p1,m1].DiracSigma[CGAD[i],CGAD[j]].\
+SpinorVD[p2,m2]]-FMSpinorChainExplicit2[SpinorUBar[p1,m1].DiracSigma[\
+CGA[i],CGA[j]].SpinorV[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID17",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].SpinorV[p2,m2]]),4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID18",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].GA[5].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[5].SpinorV[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID19",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].TGA[].SpinorV[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID20",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].SpinorV[p2,m2]]),4]\
+/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID21",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].GA[5].SpinorVD[p2,m2]]\
+-FMSpinorChainExplicit2[SpinorVBar[p1,m1].TGA[].GA[5].SpinorV[p2,m2]])\
+,4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID22",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].GA[5].SpinorVD[p2,\
+m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].GA[5].SpinorV[p2,\
+m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID23",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].DiracSigma[TGA[],CGAD[i]].\
+SpinorVD[p2,m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].DiracSigma[\
+TGA[],CGA[i]].SpinorV[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID24",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].DiracSigma[CGAD[i],CGAD[j]].\
+SpinorVD[p2,m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].DiracSigma[\
+CGA[i],CGA[j]].SpinorV[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID25",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].SpinorU[p2,m2]]),4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID26",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].GA[5].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].GA[5].SpinorU[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID27",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].TGA[].SpinorU[p2,m2]]),4]]",
+"0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID28",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]]-\
+FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].SpinorU[p2,m2]]),4]\
+/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID29",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].GA[5].SpinorUD[p2,m2]]\
+-FMSpinorChainExplicit2[SpinorVBar[p1,m1].TGA[].GA[5].SpinorU[p2,m2]])\
+,4]]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID30",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].GA[5].SpinorUD[p2,\
+m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].CGA[i].GA[5].SpinorU[p2,\
+m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID31",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].DiracSigma[TGA[],CGAD[i]].\
+SpinorUD[p2,m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].DiracSigma[\
+TGA[],CGA[i]].SpinorU[p2,m2]]),4]/.D\[Rule]4]", "0"},
+{"fcstFMSpinorChainExplicit2DimCheck-ID32",
+"FCCanonicalizeDummyIndices[ChangeDimension[(\
+FMSpinorChainExplicit2[SpinorVBarD[p1,m1].DiracSigma[CGAD[i],CGAD[j]].\
+SpinorUD[p2,m2]]-FMSpinorChainExplicit2[SpinorVBar[p1,m1].DiracSigma[\
+CGA[i],CGA[j]].SpinorU[p2,m2]]),4]/.D\[Rule]4]", "0"}
+});
+

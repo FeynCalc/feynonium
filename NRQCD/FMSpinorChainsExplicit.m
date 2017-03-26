@@ -285,10 +285,10 @@ FMSpinorChainsExplicit[expr_, {p1final_, m1_}, {p2final_, m2_}, OptionsPattern[]
 
 		res = res /. head -> headFinal;
 
-		If[	!FreeQ[res,FMStandardSpinorChain],
+		(*If[	!FreeQ[res,FMStandardSpinorChain],
 			Message[FMSpinorChainsExplicit::failmsg,"Failed to substitute all spinor chains."];
 			Abort[]
-		];
+		];*)
 
 		res
 
@@ -346,7 +346,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 					CPair[x, CMomentum[p1]] PauliXi[-I].PauliSigma[CMomentum[p2]].PauliEta[I] +
 					CPair[x, CMomentum[p2]] PauliXi[-I].PauliSigma[CMomentum[p1]].PauliEta[I] -
 					p1p2 PauliXi[-I].PauliSigma[x].PauliEta[I] -
-					I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
+					I PauliXi[-I].PauliEta[I] Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
 			)],
 
 		(*	Production axial-vector chain , temporal component	*)
@@ -411,7 +411,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			(
 			tmpci = CIndex[$MU[Unique[]]];
 			head[norm (
-				PauliEta[-I].PauliXi[I] -
+				-PauliEta[-I].PauliXi[I] +
 				(p1p2 PauliEta[-I].PauliXi[I] +
 				I Eps[tmpci, CMomentum[p1], CMomentum[p2]] PauliEta[-I].PauliSigma[tmpci].PauliXi[I])/((p10+m1)(p20+m2))
 			)]),
@@ -429,7 +429,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 					CPair[x, CMomentum[p1]] PauliEta[-I].PauliSigma[CMomentum[p2]].PauliXi[I] +
 					CPair[x, CMomentum[p2]] PauliEta[-I].PauliSigma[CMomentum[p1]].PauliXi[I] -
 					p1p2 PauliEta[-I].PauliSigma[x].PauliXi[I] -
-					I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
+					I PauliEta[-I].PauliXi[I] Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
 			)],
 
 		(*	Decay axial-vector chain , temporal component	*)
@@ -439,7 +439,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			head[norm (
 				PauliEta[-I].PauliXi[I] +
 				(p1p2 PauliEta[-I].PauliXi[I] +
-				I Eps[tmpci, CMomentum[p1], CMomentum[p2]] PauliXi[-I].PauliSigma[tmpci].PauliEta[I])/((p10+m1)(p20+m2))
+				I Eps[tmpci, CMomentum[p1], CMomentum[p2]] PauliEta[-I].PauliSigma[tmpci].PauliXi[I])/((p10+m1)(p20+m2))
 			)]),
 
 		(*	Decay axial-vector chain , spatial component	*)
@@ -462,8 +462,8 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 				PauliEta[-I].PauliSigma[x].PauliXi[I] -	(
 					CPair[x, CMomentum[p1]] PauliEta[-I].PauliSigma[CMomentum[p2]].PauliXi[I] +
 					CPair[x, CMomentum[p2]] PauliEta[-I].PauliSigma[CMomentum[p1]].PauliXi[I] -
-					p1p2 PauliXi[-I].PauliSigma[x].PauliEta[I] -
-					I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
+					p1p2 PauliEta[-I].PauliSigma[x].PauliXi[I] -
+					I PauliEta[-I].PauliXi[I] Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
 			)],
 
 
@@ -513,7 +513,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 		CPair[(x: _CIndex | _CMomentum),CMomentum[FMStandardSpinorChain["V",3,{p1,m1},{p2,m2}]]] :>
 			(
 			tmpci = CIndex[$MU[Unique[]]];
-			head[norm (
+			head[ norm (
 				(CPair[x, CMomentum[p1]] PauliXi[-I].PauliXi[I] -
 				I Eps[x, CMomentum[p1], tmpci] PauliXi[-I].PauliSigma[tmpci].PauliXi[I])/(p10+m1) +
 
@@ -531,12 +531,12 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 		(*	Fermion-fermion axial-vector chain , spatial component	*)
 		CPair[(x: _CIndex | _CMomentum),CMomentum[FMStandardSpinorChain["A",3,{p1,m1},{p2,m2}]]] :>
-			head[norm (
+			head[ norm (
 				PauliXi[-I].PauliSigma[x].PauliXi[I] +	(
 					CPair[x, CMomentum[p1]] PauliXi[-I].PauliSigma[CMomentum[p2]].PauliXi[I] +
 					CPair[x, CMomentum[p2]] PauliXi[-I].PauliSigma[CMomentum[p1]].PauliXi[I] -
 					p1p2 PauliXi[-I].PauliSigma[x].PauliXi[I] -
-					I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
+					PauliXi[-I].PauliXi[I] I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
 			)],
 
 
@@ -544,9 +544,9 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 		FMStandardSpinorChain["T",3,{p1,m1},{p2,m2},TIndex[], (x: _CIndex | _CMomentum)] :>
 			(
 			tmpci = CIndex[$MU[Unique[]]];
-			head[I norm (
+			head[-I norm (
 				(CPair[x, CMomentum[p1]] PauliXi[-I].PauliXi[I] -
-				I Eps[x, CMomentum[p1], tmpci] PauliXi[-I].PauliSigma[tmpci].PauliXi[I])/(p10+m1) +
+				I Eps[x, CMomentum[p1], tmpci] PauliXi[-I].PauliSigma[tmpci].PauliXi[I])/(p10+m1) -
 
 				(CPair[x, CMomentum[p2]] PauliXi[-I].PauliXi[I] +
 				I Eps[x, CMomentum[p2], tmpci] PauliXi[-I].PauliSigma[tmpci].PauliXi[I])/(p20+m2)
@@ -558,15 +558,13 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 		FMStandardSpinorChain["T",3,{p1,m1},{p2,m2},(x: _CIndex | _CMomentum), (y: _CIndex | _CMomentum)] :>
 			(
 			tmpci = CIndex[$MU[Unique[]]];
-			head[ I norm (
-
-				-I Eps[x,y,tmpci] PauliXi[-I].PauliSigma[tmpci].PauliXi[I] +
-
-				(I Eps[x,y, tmpci]CPair[tmpci, CMomentum[p1]]PauliXi[-I].PauliSigma[CMomentum[p2]].PauliXi[I] +
-				I Eps[x,y, tmpci]CPair[tmpci, CMomentum[p2]]PauliXi[-I].PauliSigma[CMomentum[p1]].PauliXi[I] -
-				I Eps[x,y,tmpci] p1p2 PauliXi[-I].PauliSigma[tmpci].PauliXi[I]
-				+ (CPair[x,CMomentum[p1]] CPair[y,CMomentum[p2]] - CPair[y,CMomentum[p1]] CPair[x,CMomentum[p2]]) PauliXi[-I].PauliXi[I]
-				)/(p10+m1)(p20+m2)
+			head[ norm (
+					PauliXi[-I].PauliSigma[tmpci].PauliXi[I] Eps[x, y, tmpci] +
+					(-I (CPair[x, CMomentum[p2]] CPair[y, CMomentum[p1]] - CPair[x, CMomentum[p1]] CPair[y,CMomentum[p2]]) PauliXi[-I].PauliXi[I] -
+					PauliXi[-I].PauliSigma[CMomentum[p2]].PauliXi[I] Eps[x, y, CMomentum[p1]] -
+					PauliXi[-I].PauliSigma[y].PauliXi[I] Eps[x, CMomentum[p1], CMomentum[p2]] -
+					PauliXi[-I].PauliSigma[tmpci].PauliXi[I] (-CPair[x, y] Eps[tmpci, CMomentum[p1], CMomentum[p2]] +
+					CPair[y, CMomentum[p2]] Eps[x, tmpci, CMomentum[p1]] - CPair[x, CMomentum[p1]] Eps[y, tmpci, CMomentum[p2]]))(1/((m1 + p10) (m2 + p20)))
 			)]),
 
 
@@ -626,7 +624,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 					CPair[x, CMomentum[p1]] PauliEta[-I].PauliSigma[CMomentum[p2]].PauliEta[I] +
 					CPair[x, CMomentum[p2]] PauliEta[-I].PauliSigma[CMomentum[p1]].PauliEta[I] -
 					p1p2 PauliEta[-I].PauliSigma[x].PauliEta[I] -
-					I Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
+					I PauliEta[-I].PauliEta[I] Eps[x,CMomentum[p1],CMomentum[p2]])/((p10+m1)(p20+m2))
 			)],
 
 
@@ -634,9 +632,9 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 		FMStandardSpinorChain["T",4,{p1,m1},{p2,m2},TIndex[], (x: _CIndex | _CMomentum)] :>
 			(
 			tmpci = CIndex[$MU[Unique[]]];
-			head[-I norm (
+			head[I norm (
 				(CPair[x, CMomentum[p1]] PauliEta[-I].PauliEta[I] -
-				I Eps[x, CMomentum[p1], tmpci] PauliEta[-I].PauliSigma[tmpci].PauliEta[I])/(p10+m1) +
+				I Eps[x, CMomentum[p1], tmpci] PauliEta[-I].PauliSigma[tmpci].PauliEta[I])/(p10+m1) -
 
 				(CPair[x, CMomentum[p2]] PauliEta[-I].PauliEta[I] +
 				I Eps[x, CMomentum[p2], tmpci] PauliEta[-I].PauliSigma[tmpci].PauliEta[I])/(p20+m2)
@@ -648,16 +646,17 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 		FMStandardSpinorChain["T",4,{p1,m1},{p2,m2},(x: _CIndex | _CMomentum), (y: _CIndex | _CMomentum)] :>
 			(
 			tmpci = CIndex[$MU[Unique[]]];
-			head[ -I norm (
+			head[ norm (
 
-				-I Eps[x,y,tmpci] PauliEta[-I].PauliSigma[tmpci].PauliEta[I] +
+				-PauliEta[-I].PauliSigma[tmpci].PauliEta[I] Eps[x, y, tmpci] +
 
-				(I Eps[x,y, tmpci]CPair[tmpci, CMomentum[p1]]PauliEta[-I].PauliSigma[CMomentum[p2]].PauliEta[I] +
-				I Eps[x,y, tmpci]CPair[tmpci, CMomentum[p2]]PauliEta[-I].PauliSigma[CMomentum[p1]].PauliEta[I] -
-				I Eps[x,y,tmpci] p1p2 PauliEta[-I].PauliSigma[tmpci].PauliEta[I]
-				+ (CPair[x,CMomentum[p1]] CPair[y,CMomentum[p2]] - CPair[y,CMomentum[p1]] CPair[x,CMomentum[p2]]) PauliEta[-I].PauliEta[I]
-				)/(p10+m1)(p20+m2)
-			)])
+			(I (CPair[x, CMomentum[p2]] CPair[y, CMomentum[p1]] - CPair[x, CMomentum[p1]] CPair[y, CMomentum[p2]]) PauliEta[-I].PauliEta[I] +
+				PauliEta[-I].PauliSigma[CMomentum[p2]].PauliEta[I] Eps[x, y, CMomentum[p1]] +
+				PauliEta[-I].PauliSigma[y].PauliEta[I] Eps[x, CMomentum[p1], CMomentum[p2]] +
+				PauliEta[-I].PauliSigma[tmpci].PauliEta[I] (-CPair[x, y] Eps[tmpci, CMomentum[p1], CMomentum[p2]] +
+				CPair[y, CMomentum[p2]] Eps[x, tmpci, CMomentum[p1]] - CPair[x, CMomentum[p1]] Eps[y, tmpci, CMomentum[p2]]))/((m1 + p10) (m2 + p20))
+			)]
+			)
 		};
 
 		res = res/. norm -> n1 n2 /. {p10 -> TPair[TIndex[],TMomentum[p1]],
