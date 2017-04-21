@@ -1,0 +1,31 @@
+(* :Title: FMToStandardSpinorChains.test														*)
+
+(*
+	This software is covered by the GNU General Public License 3.
+	Copyright (C) 2015 Vladyslav Shtabovenko
+*)
+
+(* :Summary:  Framework independent unit tests for FMSharedObjects	*)
+
+(* ------------------------------------------------------------------------ *)
+
+Tests`Shared`FMCartesianSchoutenBruteForce =
+({
+{"FMSharedObjectsFMStandardSpinorChain-ID1",
+"FCClearScalarProducts[]; \n
+CSP[khat, Polarization[k1, -I, Transversality -> True]] = 0; \n
+CSP[khat, Polarization[k2, -I, Transversality -> True]] = 0; \n
+CSP[khat, khat] = 1; \n
+CSP[qhat, qhat] = 1; \n
+FMCartesianSchoutenBruteForce[
+CSP[khat,
+qhat] (CSP[khat, qhat] CLC[][khat,
+	Polarization[k1, -I, Transversality -> True],
+	Polarization[k2, -I, Transversality -> True]] -
+	CLC[][qhat, Polarization[k1, -I, Transversality -> True],
+	Polarization[k2, -I, Transversality -> True]]), {khat, khat, qhat,
+Polarization[k1, -I, Transversality -> True],
+Polarization[k2, -I, Transversality -> True]
+}, FCVerbose -> -1]",
+"0"}
+});

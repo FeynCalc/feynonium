@@ -6,7 +6,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary: 	Tools for calculations in non-relativistic EFTs			 	*)
@@ -25,7 +25,7 @@ End[]
 
 Begin["`FeynOnium`Private`"];
 
-$FeynOniumVersion="0.1.0";
+$FeynOniumVersion="0.5.0";
 
 $FeynOniumDirectory =
 ToFileName[{$FeynCalcDirectory, "AddOns", "FeynOnium"}];
@@ -50,7 +50,7 @@ If[ Global`$FeynCalcStartupMessages =!= False,
 							SystemOpen[FileNameJoin[{$FeynOniumDirectory, "Examples"}]],
 							Evaluator -> Automatic, Method -> "Preemptive"], "Text"],
 	Style[" If you use FeynOnium in your research, please cite","Text"]];
-	Print [Style[" \[Bullet] N. Brambilla, V. Shtabovenko and A.Vairo \"FeynOnium: Using FeynCalc for automatic calculations in non-relativistic EFTs\", TUM-EFT 92/17, in preparation","Text"]];
+	Print [Style[" \[Bullet] N. Brambilla, V. Shtabovenko and A.Vairo, TUM-EFT 92/17, in preparation","Text"]];
 ];
 
 End[]

@@ -199,12 +199,12 @@ Epsilon]&", "null"},
 p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
 Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&",
-"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
-- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
-TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID7",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[TGA[],\
 CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
@@ -215,17 +215,17 @@ CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
-"null - ((2*I)*(CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
-D]]*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + D]]*PauliXi[-I] . \
-PauliXi[I] - CPair[CIndex[i, -1 + D], CIndex[j, -1 + \
-D]]*CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliXi[I] - I*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[ii, -1 + D], -1 + D] . \
-PauliXi[I]*Eps[CIndex[i, -1 + D], CIndex[ii, -1 + D], CMomentum[p1, \
--1 + D]] - I*PauliXi[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
-PauliXi[I]*Eps[CIndex[i, -1 + D], CMomentum[p1, -1 + D], \
-CMomentum[p2, -1 + D]]))/(Sqrt[m1 + TPair[TIndex[], \
-TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], TMomentum[p2]]])"},
+"null - ((2*I)*(CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + D]]*PauliXi[-I] . \
+PauliXi[I] - CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + \
+D]]*CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliXi[I] - I*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[ii, -1 + D], -1 + D] . \
+PauliXi[I]*Eps[CartesianIndex[i, -1 + D], CartesianIndex[ii, -1 + D], CartesianMomentum[p1, \
+-1 + D]] - I*PauliXi[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
+PauliXi[I]*Eps[CartesianIndex[i, -1 + D], CartesianMomentum[p1, -1 + D], \
+CartesianMomentum[p2, -1 + D]]))/(Sqrt[m1 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID9",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorVD[p2,m2]]/\
 Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
@@ -242,12 +242,12 @@ Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]\
 ]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
 &//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
-"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
-- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
-TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID13",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].GA[5].SpinorVD[\
 p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
@@ -263,36 +263,36 @@ Epsilon]&", "null"},
 CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 //Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
 #+null,Epsilon]&",
-"null + ((2*I)*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
-- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
-TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null + ((2*I)*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliEta[I]))/(Sqrt[m1 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID16",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[CGAD[\
 i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&",
-"null - ((2*I)*(m2*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] \
-- m1*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I] + \
-m1*CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CIndex[j, -1 + D], -1 + D] . PauliEta[I] - \
-m2*CPair[CIndex[i, -1 + D], CIndex[j, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliEta[I] - \
-CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliEta[I]*TPair[TIndex[], \
-TMomentum[p1]] + CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
-PauliEta[I]*TPair[TIndex[], TMomentum[p1]] + CPair[CIndex[j, -1 + D], \
-CMomentum[p1, -1 + D]]*PauliXi[-I] . PauliSigma[CIndex[i, -1 + D], -1 \
-+ D] . PauliEta[I]*TPair[TIndex[], TMomentum[p2]] - CPair[CIndex[i, \
--1 + D], CIndex[j, -1 + D]]*PauliXi[-I] . PauliSigma[CMomentum[p1, -1 \
-+ D], -1 + D] . PauliEta[I]*TPair[TIndex[], TMomentum[p2]]))/(Sqrt[m1 \
-+ TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null - ((2*I)*(m2*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] \
+- m1*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] + \
+m1*CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . PauliEta[I] - \
+m2*CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliEta[I] - \
+CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
+PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I]*TemporalPair[TemporalIndex[], \
+TemporalMomentum[p1]] + CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliXi[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
+PauliEta[I]*TemporalPair[TemporalIndex[], TemporalMomentum[p1]] + CartesianPair[CartesianIndex[j, -1 + D], \
+CartesianMomentum[p1, -1 + D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 \
++ D] . PauliEta[I]*TemporalPair[TemporalIndex[], TemporalMomentum[p2]] - CartesianPair[CartesianIndex[i, \
+-1 + D], CartesianIndex[j, -1 + D]]*PauliXi[-I] . PauliSigma[CartesianMomentum[p1, -1 \
++ D], -1 + D] . PauliEta[I]*TemporalPair[TemporalIndex[], TemporalMomentum[p2]]))/(Sqrt[m1 \
++ TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID17",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorVD[p2,m2]]/\
 Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
@@ -320,12 +320,12 @@ Epsilon]&", "null"},
 p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
 Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&",
-"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . \
-PauliEta[I] - CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CMomentum[p1, -1 + D], -1 + D] . \
-PauliEta[I]))/(Sqrt[m1 + TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + \
-TPair[TIndex[], TMomentum[p2]]])"},
+"null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . \
+PauliEta[I] - CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . \
+PauliEta[I]))/(Sqrt[m1 + TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID23",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[TGA[],\
 CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
@@ -336,17 +336,17 @@ CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
-"null - ((2*I)*(CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
-D]]*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + D]]*PauliEta[-I] . \
-PauliEta[I] - CPair[CIndex[i, -1 + D], CIndex[j, -1 + \
-D]]*CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] \
-. PauliEta[I] - I*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[ii, -1 + D], -1 + D] . \
-PauliEta[I]*Eps[CIndex[i, -1 + D], CIndex[ii, -1 + D], CMomentum[p1, \
--1 + D]] - I*PauliEta[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
-PauliEta[I]*Eps[CIndex[i, -1 + D], CMomentum[p1, -1 + D], \
-CMomentum[p2, -1 + D]]))/(Sqrt[m1 + TPair[TIndex[], \
-TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], TMomentum[p2]]])"},
+"null - ((2*I)*(CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + D]]*PauliEta[-I] . \
+PauliEta[I] - CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + \
+D]]*CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] \
+. PauliEta[I] - I*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[ii, -1 + D], -1 + D] . \
+PauliEta[I]*Eps[CartesianIndex[i, -1 + D], CartesianIndex[ii, -1 + D], CartesianMomentum[p1, \
+-1 + D]] - I*PauliEta[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
+PauliEta[I]*Eps[CartesianIndex[i, -1 + D], CartesianMomentum[p1, -1 + D], \
+CartesianMomentum[p2, -1 + D]]))/(Sqrt[m1 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID25",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorUD[p2,m2]]/\
 Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
@@ -363,12 +363,12 @@ Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]\
 ]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
 &//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
-"null + (2*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
-- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
-TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID29",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].GA[5].SpinorUD[\
 p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
@@ -384,36 +384,36 @@ Epsilon]&", "null"},
 CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 //Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
 #+null,Epsilon]&",
-"null + ((2*I)*(CPair[CMomentum[p1, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
-- CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
-TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + TPair[TIndex[], \
-TMomentum[p2]]])"},
+"null + ((2*I)*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliXi[I]))/(Sqrt[m1 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID32",
 "((FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[CGAD[\
 i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)",
-"null - ((2*I)*(m2*CPair[CIndex[j, -1 + D], CMomentum[p1, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] \
-- m1*CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I] + \
-m1*CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CIndex[j, -1 + D], -1 + D] . PauliXi[I] - \
-m2*CPair[CIndex[i, -1 + D], CIndex[j, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CMomentum[p1, -1 + D], -1 + D] . PauliXi[I] - \
-CPair[CIndex[j, -1 + D], CMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CIndex[i, -1 + D], -1 + D] . PauliXi[I]*TPair[TIndex[], \
-TMomentum[p1]] + CPair[CIndex[i, -1 + D], CMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CIndex[j, -1 + D], -1 + D] . \
-PauliXi[I]*TPair[TIndex[], TMomentum[p1]] + CPair[CIndex[j, -1 + D], \
-CMomentum[p1, -1 + D]]*PauliEta[-I] . PauliSigma[CIndex[i, -1 + D], \
--1 + D] . PauliXi[I]*TPair[TIndex[], TMomentum[p2]] - CPair[CIndex[i, \
--1 + D], CIndex[j, -1 + D]]*PauliEta[-I] . PauliSigma[CMomentum[p1, \
--1 + D], -1 + D] . PauliXi[I]*TPair[TIndex[], \
-TMomentum[p2]]))/(Sqrt[m1 + TPair[TIndex[], TMomentum[p1]]]*Sqrt[m2 + \
-TPair[TIndex[], TMomentum[p2]]])"}
+"null - ((2*I)*(m2*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
+- m1*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] + \
+m1*CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . PauliXi[I] - \
+m2*CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliXi[I] - \
+CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
+PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I]*TemporalPair[TemporalIndex[], \
+TemporalMomentum[p1]] + CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
+D]]*PauliEta[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
+PauliXi[I]*TemporalPair[TemporalIndex[], TemporalMomentum[p1]] + CartesianPair[CartesianIndex[j, -1 + D], \
+CartesianMomentum[p1, -1 + D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], \
+-1 + D] . PauliXi[I]*TemporalPair[TemporalIndex[], TemporalMomentum[p2]] - CartesianPair[CartesianIndex[i, \
+-1 + D], CartesianIndex[j, -1 + D]]*PauliEta[-I] . PauliSigma[CartesianMomentum[p1, \
+-1 + D], -1 + D] . PauliXi[I]*TemporalPair[TemporalIndex[], \
+TemporalMomentum[p2]]))/(Sqrt[m1 + TemporalPair[TemporalIndex[], TemporalMomentum[p1]]]*Sqrt[m2 + \
+TemporalPair[TemporalIndex[], TemporalMomentum[p2]]])"}
 });
 
 Tests`NRQCD`FMSpinorChainExplicit2DimCheck =

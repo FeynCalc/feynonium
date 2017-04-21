@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Applies Schouten identity									*)
@@ -20,6 +20,7 @@ Begin["`Package`"]
 End[]
 
 Begin["`FMCartesianSchoutenBruteForce`Private`"]
+fmcsbv::usage="";
 
 Options[FMCartesianSchoutenBruteForce] = {
 	FCI -> False,
@@ -27,23 +28,38 @@ Options[FMCartesianSchoutenBruteForce] = {
 	Collect -> True,
 	EpsEvaluate -> True,
 	Head -> None,
-	Factoring -> Identity
+	Factoring -> Identity,
+	FCVerbose -> 0
 };
 
 checkSchouten[x_, repRule_]:=
-Block[{lenBefore,lenAfter},
+Block[{lenBefore,lenAfter, expr},
 	lenBefore = Length[x];
-	lenAfter = Length[Expand[x /. CPair[a__]^z_ :> CPair[a] pow[CPair,z-1]  /. repRule[[1]] :> repRule[[2]]] /. pow -> Power ];
+	expr = x /. CartesianPair[a__]^z_ :> CartesianPair[a] pow[CartesianPair[a],z-1];
+	FCPrint[3, "FMCartesianSchoutenBruteForce: checkSchouten: expr ", expr, FCDoControl->fmcsbv];
+	FCPrint[3, "FMCartesianSchoutenBruteForce: checkSchouten: repRule ", repRule, FCDoControl->fmcsbv];
+	lenAfter = Length[Expand[expr  /. repRule[[1]] :> repRule[[2]]] /. pow -> Power ];
 	lenBefore-lenAfter
 ];
 
 FMCartesianSchoutenBruteForce[expr_, vars_List, OptionsPattern[]] :=
 	Block[{ex, res,pat,head, sublists, combos, maxRed = 3, cs, gain=0,
 		repRule,list,factfun},
+
+		If[	OptionValue[FCVerbose]===False,
+			fmcsbv=$VeryVerbose,
+			If[MatchQ[OptionValue[FCVerbose], _Integer | 0],
+				fmcsbv=OptionValue[FCVerbose]
+			];
+		];
+
 		If[	OptionValue[FCI],
 			ex = expr,
 			ex = FCI[expr]
 		];
+
+		FCPrint[1, "FMCartesianSchoutenBruteForce. Entering.", FCDoControl->fmcsbv];
+		FCPrint[3, "FMCartesianSchoutenBruteForce: Entering with ", ex, FCDoControl->fmcsbv];
 
 		If[	FreeQ[ex,Eps],
 			Return[ex]
@@ -54,44 +70,41 @@ FMCartesianSchoutenBruteForce[expr_, vars_List, OptionsPattern[]] :=
 
 		sublists = Subsets[vars, {5}];
 
-		(*sublists = {
-			{#[[1]],#[[2]],#[[3]],#[[4]],#[[5]]},
-			{#[[1]],#[[2]],#[[4]],#[[3]],#[[5]]},
-			{#[[1]],#[[2]],#[[5]],#[[3]],#[[4]]},
-			{#[[1]],#[[3]],#[[4]],#[[2]],#[[5]]},
-			{#[[1]],#[[3]],#[[5]],#[[2]],#[[4]]},
-			{#[[1]],#[[4]],#[[5]],#[[2]],#[[3]]},
-			{#[[2]],#[[3]],#[[4]],#[[1]],#[[5]]},
-			{#[[2]],#[[3]],#[[5]],#[[1]],#[[4]]},
-			{#[[2]],#[[4]],#[[5]],#[[1]],#[[3]]},
-			{#[[3]],#[[4]],#[[5]],#[[1]],#[[2]]}
-		}& /@ sublists;*)
-
 		sublists = Permutations[#,{5}]& /@ sublists;
 
 		sublists = Flatten[sublists,1];
 
-		combos = {Eps[CMomentum[#[[1]]], CMomentum[#[[2]]],
-			CMomentum[#[[3]]]] CPair[CMomentum[#[[4]]], CMomentum[#[[5]]]],
+		FCPrint[3, "FMCartesianSchoutenBruteForce: sublists: ", sublists, FCDoControl->fmcsbv];
 
-			Eps[CMomentum[#[[2]]], CMomentum[#[[3]]], CMomentum[#[[4]]]] CPair[
-				CMomentum[#[[1]]], CMomentum[#[[5]]]] -
+		combos = {Eps[CartesianMomentum[#[[1]]], CartesianMomentum[#[[2]]],
+			CartesianMomentum[#[[3]]]] CartesianPair[CartesianMomentum[#[[4]]], CartesianMomentum[#[[5]]]],
 
-			Eps[CMomentum[#[[3]]], CMomentum[#[[4]]], CMomentum[#[[1]]]] CPair[
-				CMomentum[#[[2]]], CMomentum[#[[5]]]] +
+			Eps[CartesianMomentum[#[[2]]], CartesianMomentum[#[[3]]], CartesianMomentum[#[[4]]]] CartesianPair[
+				CartesianMomentum[#[[1]]], CartesianMomentum[#[[5]]]] -
 
-			Eps[CMomentum[#[[4]]], CMomentum[#[[1]]], CMomentum[#[[2]]]] CPair[
-				CMomentum[#[[3]]], CMomentum[#[[5]]]]}&/@ sublists;
+			Eps[CartesianMomentum[#[[3]]], CartesianMomentum[#[[4]]], CartesianMomentum[#[[1]]]] CartesianPair[
+				CartesianMomentum[#[[2]]], CartesianMomentum[#[[5]]]] +
 
+			Eps[CartesianMomentum[#[[4]]], CartesianMomentum[#[[1]]], CartesianMomentum[#[[2]]]] CartesianPair[
+				CartesianMomentum[#[[3]]], CartesianMomentum[#[[5]]]]}&/@ sublists;
+
+
+		FCPrint[4, "FMCartesianSchoutenBruteForce: combos ", combos, FCDoControl->fmcsbv];
 
 		combos = {EpsEvaluate[#[[1]]],EpsEvaluate[#[[2]]]}&/@ combos;
 
-		combos = If[ MatchQ[#[[1]], -1 * _Eps _CPair],
+		FCPrint[4, "FMCartesianSchoutenBruteForce: combos after EpsEvaluate: ", combos, FCDoControl->fmcsbv];
+
+		combos = If[ MatchQ[#[[1]], -1 * _Eps _CartesianPair | -1 * _Eps],
 			{Expand[-1*#[[1]]],Expand[-1*#[[2]]]},
 			{#[[1]],#[[2]]}
 		]& /@ combos;
 
-		combos = Union[combos] /. {0,_} -> Unevaluated[Sequence[]];
+		FCPrint[4, "FMCartesianSchoutenBruteForce: combos after sign adjustments: ", combos, FCDoControl->fmcsbv];
+
+		combos = Union[combos] /. {0,_}|{a_,a_} -> Unevaluated[Sequence[]];
+
+		FCPrint[3, "FMCartesianSchoutenBruteForce: final combos: ", combos, FCDoControl->fmcsbv];
 
 		list = Catch[
 			Map[(cs = checkSchouten[ex,#];
@@ -112,7 +125,7 @@ FMCartesianSchoutenBruteForce[expr_, vars_List, OptionsPattern[]] :=
 			ex = ex /. repRule[[1]] :> repRule[[2]]
 		];
 
-		Print["Gain: ", gain, "; Combo: ", repRule[[2]]];
+		FCPrint[0, "FMCartesianSchoutenBruteForce: ", gain, " terms were removed using ", {repRule[[1]] -> repRule[[2]]}, " ", FCDoControl->fmcsbv];
 
 		res = ex;
 

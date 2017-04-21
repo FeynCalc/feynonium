@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Applies Schouten identity									*)
@@ -38,11 +38,11 @@ FMCartesianSchouten2[expr_, {a1_,b1_,a2_,b2_,a3_,b3_,a4_,a5_}, OptionsPattern[]]
 		];
 
 		input =
-			CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2], CMomentum[b2]] *
-			CPair[CMomentum[a3], CMomentum[b3]] CPair[CMomentum[a4], CMomentum[a5]];
+			CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2], CartesianMomentum[b2]] *
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a4], CartesianMomentum[a5]];
 
 		If[	OptionValue[Expand],
-			ex = Expand2[expr, {CPair}]
+			ex = Expand2[expr, {CartesianPair}]
 		];
 
 		If[	FreeQ[ex, input],
@@ -56,76 +56,71 @@ FMCartesianSchouten2[expr_, {a1_,b1_,a2_,b2_,a3_,b3_,a4_,a5_}, OptionsPattern[]]
 
 				((
 
-				CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2],
-		CMomentum[b3]] CPair[CMomentum[a3], CMomentum[b2]] CPair[
-		CMomentum[a4], CMomentum[a5]] -
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b3]] CPair[CMomentum[a3], CMomentum[b2]] CPair[
-		CMomentum[a4], CMomentum[b1]] +
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b2]] CPair[CMomentum[a3], CMomentum[b3]] CPair[
-		CMomentum[a4], CMomentum[b1]] -
-		CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2],
-		CMomentum[b3]] CPair[CMomentum[a3], CMomentum[a5]] CPair[
-		CMomentum[a4], CMomentum[b2]] +
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b3]] CPair[CMomentum[a3], CMomentum[b1]] CPair[
-		CMomentum[a4], CMomentum[b2]] +
-		CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2],
-		CMomentum[a5]] CPair[CMomentum[a3], CMomentum[b3]] CPair[
-		CMomentum[a4], CMomentum[b2]] -
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b1]] CPair[CMomentum[a3], CMomentum[b3]] CPair[
-		CMomentum[a4], CMomentum[b2]] +
-		CPair[CMomentum[a1],
-		CMomentum[
-			b3]] (CPair[CMomentum[a2],
-			CMomentum[
-			b2]] (CPair[CMomentum[a3], CMomentum[b1]] CPair[CMomentum[a4],
-				CMomentum[a5]] -
-			CPair[CMomentum[a3], CMomentum[a5]] CPair[CMomentum[a4],
-				CMomentum[b1]]) +
-			CPair[CMomentum[a2],
-			CMomentum[
-			b1]] (-CPair[CMomentum[a3], CMomentum[b2]] CPair[CMomentum[a4],
-				CMomentum[a5]] +
-			CPair[CMomentum[a3], CMomentum[a5]] CPair[CMomentum[a4],
-				CMomentum[b2]]) +
-			CPair[CMomentum[a2],
-			CMomentum[
-			a5]] (CPair[CMomentum[a3], CMomentum[b2]] CPair[CMomentum[a4],
-				CMomentum[b1]] -
-			CPair[CMomentum[a3], CMomentum[b1]] CPair[CMomentum[a4],
-				CMomentum[b2]])) +
-		CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2],
-		CMomentum[b2]] CPair[CMomentum[a3], CMomentum[a5]] CPair[
-		CMomentum[a4], CMomentum[b3]] -
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b2]] CPair[CMomentum[a3], CMomentum[b1]] CPair[
-		CMomentum[a4], CMomentum[b3]] -
-		CPair[CMomentum[a1], CMomentum[b1]] CPair[CMomentum[a2],
-		CMomentum[a5]] CPair[CMomentum[a3], CMomentum[b2]] CPair[
-		CMomentum[a4], CMomentum[b3]] +
-		CPair[CMomentum[a1], CMomentum[a5]] CPair[CMomentum[a2],
-		CMomentum[b1]] CPair[CMomentum[a3], CMomentum[b2]] CPair[
-		CMomentum[a4], CMomentum[b3]] +
-		CPair[CMomentum[a1],
-		CMomentum[b2]] (CPair[CMomentum[a2],CMomentum[b3]] (-CPair[CMomentum[a3], CMomentum[b1]] CPair[CMomentum[a4],
-				CMomentum[a5]] +
-			CPair[CMomentum[a3], CMomentum[a5]] CPair[CMomentum[a4],
-				CMomentum[b1]]) +
-			CPair[CMomentum[a2],
-			CMomentum[
-			b1]] (CPair[CMomentum[a3], CMomentum[b3]] CPair[CMomentum[a4],
-				CMomentum[a5]] -
-			CPair[CMomentum[a3], CMomentum[a5]] CPair[CMomentum[a4],
-				CMomentum[b3]]) +
-			CPair[CMomentum[a2],
-			CMomentum[
-			a5]] (-CPair[CMomentum[a3], CMomentum[b3]] CPair[CMomentum[a4],
-				CMomentum[b1]] +
-			CPair[CMomentum[a3], CMomentum[b1]] CPair[CMomentum[a4],
-				CMomentum[b3]]))
+				CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[a5]] -
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b1]] +
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b2]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b1]] -
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b2]] +
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b2]] +
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b2]] -
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b2]] +
+		CartesianPair[CartesianMomentum[a1],CartesianMomentum[b3]] (CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b2]] (CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a4], CartesianMomentum[a5]] -
+		CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a4],CartesianMomentum[b1]]) +
+			CartesianPair[CartesianMomentum[a2],
+			CartesianMomentum[
+			b1]] (-CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[a5]] +
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b2]]) +
+			CartesianPair[CartesianMomentum[a2],
+			CartesianMomentum[
+			a5]] (CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b1]] -
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b2]])) +
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b2]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b3]] -
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b2]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b3]] -
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b3]] +
+		CartesianPair[CartesianMomentum[a1], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a2],
+		CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a3], CartesianMomentum[b2]] CartesianPair[
+		CartesianMomentum[a4], CartesianMomentum[b3]] +
+		CartesianPair[CartesianMomentum[a1],
+		CartesianMomentum[b2]] (CartesianPair[CartesianMomentum[a2],CartesianMomentum[b3]] (-CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[a5]] +
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b1]]) +
+			CartesianPair[CartesianMomentum[a2],
+			CartesianMomentum[
+			b1]] (CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[a5]] -
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[a5]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b3]]) +
+			CartesianPair[CartesianMomentum[a2],
+			CartesianMomentum[
+			a5]] (-CartesianPair[CartesianMomentum[a3], CartesianMomentum[b3]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b1]] +
+			CartesianPair[CartesianMomentum[a3], CartesianMomentum[b1]] CartesianPair[CartesianMomentum[a4],
+				CartesianMomentum[b3]]))
 
 				)/. Pattern -> pat /. pat[a_,___]:>a)
 				};
@@ -141,7 +136,7 @@ FMCartesianSchouten2[expr_, {a1_,b1_,a2_,b2_,a3_,b3_,a4_,a5_}, OptionsPattern[]]
 		];
 
 		If[	OptionValue[Collect],
-			res = Collect2[res, {CPair}]
+			res = Collect2[res, {CartesianPair}]
 		];
 
 		res

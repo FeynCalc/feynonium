@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Projects different J values out of Cartesian tensors		*)
@@ -61,7 +61,11 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 			ex = expr
 		];
 
-		tmp = Uncontract[ex, Sequence@@vecs, CPair -> All, FCI->True];
+		If[	FreeQ2[ex,vecs],
+			Return[ex]
+		];
+
+		tmp = Uncontract[ex, Sequence@@vecs, CartesianPair -> All, FCI->True];
 
 		FCPrint[1, "FMCartesianTensorDecomposition: After Uncontract: ", tmp, FCDoControl->ctdVerbose];
 
@@ -80,7 +84,7 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 
 		FCPrint[1, "FMCartesianTensorDecomposition: projList: ", projList, FCDoControl->ctdVerbose];
 
-		If[ !MatchQ[projList/.Times->List/. projHead[z_CPair]:>projHead[{z}],{projHead[{__CPair}]..}],
+		If[ !MatchQ[projList/.Times->List/. projHead[z_CartesianPair]:>projHead[{z}],{projHead[{__CartesianPair}]..}],
 			Message[FMCartesianTensorDecomposition::failmsg,"Incorrect structure of Cartesian tensors."];
 			Abort[];
 		];
@@ -90,7 +94,10 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 			Abort[];
 		];
 
-		projListEval = projList /. CPair -> CPairContract /. CPairContract -> CPair //. projHead[CPair[a__CMomentum] b_] :> CPair[a] projHead[b] /. projHead[]->1;
+		projListEval = projList /. CartesianPair -> CartesianPairContract /. CartesianPairContract -> CartesianPair //. projHead[CartesianPair[a__CartesianMomentum] b_.] :> CartesianPair[a] projHead[b] /.
+		projHead[]|projHead[1]->1;
+
+		FCPrint[1, "FMCartesianTensorDecomposition: projListEval: ", projListEval, FCDoControl->ctdVerbose];
 
 		(*	If all the vectors are already contracted with each other
 			and we are not taking the J=0 projection, then all other projections give zero. *)
@@ -136,1305 +143,1305 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 
 tensorProjRule0 = {
 	(* Rank 1*)
-	projHead[CPair[_CIndex, _CMomentum ]] :>0,
+	projHead[CartesianPair[_CartesianIndex, _CartesianMomentum ]] :>0,
 
 	(* Rank 2*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum]] :>
-		CPair[m1,m2] CPair[i1,i2]/3,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum]] :>
+		CartesianPair[m1,m2] CartesianPair[i1,i2]/3,
 
 	(* Rank 3*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]] :>
-		-(CPair[i1, m3]*CPair[i2, m2]*CPair[i3, m1])/6 + (CPair[i1, m2]*CPair[i2, m3]*CPair[i3, m1])/6 +
-		(CPair[i1, m3]*CPair[i2, m1]*CPair[i3, m2])/6 - (CPair[i1, m1]*CPair[i2, m3]*CPair[i3, m2])/6 -
-		(CPair[i1, m2]*CPair[i2, m1]*CPair[i3, m3])/6 + (CPair[i1, m1]*CPair[i2, m2]*CPair[i3, m3])/6,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]] :>
+		-(CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, m1])/6 + (CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, m1])/6 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, m2])/6 - (CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, m2])/6 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, m3])/6 + (CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, m3])/6,
 
 	(* Rank 4*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum] CPair[i4_CIndex, m4_CMomentum]] :>
-		(2*CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m4]*CPair[m2, m3])/15 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m4]*CPair[m2, m3])/30 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/30 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m3]*CPair[m2, m4])/30 +
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m3]*CPair[m2, m4])/15 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m2]*CPair[m3, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m2]*CPair[m3, m4])/30 +
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/15,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum] CartesianPair[i4_CartesianIndex, m4_CartesianMomentum]] :>
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/15 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/30 +
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/15 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/30 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/15,
 
 	(* Rank 5*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]*
-		CPair[i4_CIndex, m4_CMomentum] CPair[i5_CIndex, m5_CMomentum]] :>
-		-(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m2])/30 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m2])/30 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m2])/30 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m2])/30 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/30 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/30 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/10 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/30 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/30 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/10 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m2])/30 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m2])/30 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m2])/30 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m2])/30 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/30 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/30 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/10 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/30 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/30 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/10 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m2])/30 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m2])/30 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m2])/30 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m2])/30 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/30 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/30 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/10 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/30 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/30 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/10 -
-		(CPair[i1, m5]*CPair[i2, m4]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m3])/30 +
-		(CPair[i1, m4]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m3])/30 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m4]*CPair[i5, m2]*CPair[m1, m3])/30 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m3])/30 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/30 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/10 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/30 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/30 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/30 +
-		(CPair[i1, m5]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m3])/30 -
-		(CPair[i1, m2]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m3])/30 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i5, m4]*CPair[m1, m3])/30 +
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m3])/30 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/30 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/30 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/30 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/10 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/30 -
-		(CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m3])/30 +
-		(CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m3])/30 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m3])/30 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m3])/30 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/30 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/10 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/30 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/30 +
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/30 -
-		(CPair[i1, m5]*CPair[i2, m3]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m4])/30 +
-		(CPair[i1, m3]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m4])/10 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m4])/10 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m4])/30 -
-		(CPair[i1, m2]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m4])/10 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m4])/30 +
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m4])/30 -
-		(CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m4])/30 +
-		(CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m4])/30 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m4])/10 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m4])/10 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, m4]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m3])/30 -
-		(CPair[i1, m4]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m3])/30 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m1]*CPair[m2, m3])/30 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m3])/30 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/10 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/30 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/30 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/10 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/30 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/30 -
-		(CPair[i1, m5]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m4]*CPair[m2, m3])/30 +
-		(CPair[i1, m1]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m4]*CPair[m2, m3])/30 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m4]*CPair[m2, m3])/30 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m4]*CPair[m2, m3])/30 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/10 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/30 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/30 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/10 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/30 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/30 +
-		(CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m5]*CPair[m2, m3])/30 -
-		(CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i4]*CPair[i5, m5]*CPair[m2, m3])/30 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m3])/30 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m5]*CPair[m2, m3])/30 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/10 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/30 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/30 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/10 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/30 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/30 +
-		(CPair[i1, m5]*CPair[i2, m3]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m4])/30 -
-		(CPair[i1, m3]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m4])/10 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m4])/30 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m4])/10 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m4])/30 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m3]*CPair[m2, m4])/30 +
-		(CPair[i1, m1]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m3]*CPair[m2, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m4])/10 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m4])/30 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m2, m4])/10 +
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m5]*CPair[i5, m3]*CPair[m2, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m4])/30 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m3]*CPair[m2, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m5]*CPair[i5, m3]*CPair[m2, m4])/30 +
-		(CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m5]*CPair[m2, m4])/30 -
-		(CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i4]*CPair[i5, m5]*CPair[m2, m4])/30 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m4])/10 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m4])/30 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m2, m4])/10 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m3]*CPair[i5, m5]*CPair[m2, m4])/30 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m4])/30 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m4])/30 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m5]*CPair[m2, m4])/30 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m3]*CPair[i5, m5]*CPair[m2, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m3, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m1]*CPair[m3, m4])/10 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m1]*CPair[m3, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i5, m1]*CPair[m3, m4])/30 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m3, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i5, m1]*CPair[m3, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m1]*CPair[m3, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m2]*CPair[i5, m1]*CPair[m3, m4])/30 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m3, m4])/30 +
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m5]*CPair[i5, m1]*CPair[m3, m4])/30 +
-		(CPair[i1, m5]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m2]*CPair[m3, m4])/10 -
-		(CPair[i1, m1]*CPair[i2, m5]*CPair[i3, i4]*CPair[i5, m2]*CPair[m3, m4])/10 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m2]*CPair[m3, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m1]*CPair[i5, m2]*CPair[m3, m4])/30 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m3, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m5]*CPair[i5, m2]*CPair[m3, m4])/30 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m2]*CPair[m3, m4])/30 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m1]*CPair[i5, m2]*CPair[m3, m4])/30 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m3, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m5]*CPair[i5, m2]*CPair[m3, m4])/30 -
-		(CPair[i1, m2]*CPair[i2, m1]*CPair[i3, i4]*CPair[i5, m5]*CPair[m3, m4])/10 +
-		(CPair[i1, m1]*CPair[i2, m2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m3, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m3, m4])/30 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m1]*CPair[i5, m5]*CPair[m3, m4])/30 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m3, m4])/30 +
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m2]*CPair[i5, m5]*CPair[m3, m4])/30 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m3, m4])/30 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m1]*CPair[i5, m5]*CPair[m3, m4])/30 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m3, m4])/30 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m2]*CPair[i5, m5]*CPair[m3, m4])/30
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]*
+		CartesianPair[i4_CartesianIndex, m4_CartesianMomentum] CartesianPair[i5_CartesianIndex, m5_CartesianMomentum]] :>
+		-(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m3, m4])/30
 };
 
 tensorProjRule1 = {
 	(* Rank 1*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ]] :> CPair[i1,m1],
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ]] :> CartesianPair[i1,m1],
 
 	(* Rank 2*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum]] :>
-		-(CPair[i1, m2]*CPair[i2, m1])/2 + (CPair[i1, m1]*CPair[i2, m2])/2,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum]] :>
+		-(CartesianPair[i1, m2]*CartesianPair[i2, m1])/2 + (CartesianPair[i1, m1]*CartesianPair[i2, m2])/2,
 
 	(* Rank 3*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]] :>
-		-(CPair[i1, m3]*CPair[i2, i3]*CPair[m1, m2])/10 - (CPair[i1, i3]*CPair[i2, m3]*CPair[m1, m2])/10 +
-		(2*CPair[i1, i2]*CPair[i3, m3]*CPair[m1, m2])/5 - (CPair[i1, m2]*CPair[i2, i3]*CPair[m1, m3])/10 +
-		(2*CPair[i1, i3]*CPair[i2, m2]*CPair[m1, m3])/5 - (CPair[i1, i2]*CPair[i3, m2]*CPair[m1, m3])/10 +
-		(2*CPair[i1, m1]*CPair[i2, i3]*CPair[m2, m3])/5 - (CPair[i1, i3]*CPair[i2, m1]*CPair[m2, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[m2, m3])/10,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]] :>
+		-(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[m1, m2])/10 - (CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[m1, m2])/10 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/5 - (CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[m1, m3])/10 +
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[m1, m3])/5 - (CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[m1, m3])/10 +
+		(2*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[m2, m3])/5 - (CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[m2, m3])/10,
 
 	(* Rank 4*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum] CPair[i4_CIndex, m4_CMomentum]] :>
-		-(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m2])/10 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[m1, m2])/10 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m2])/10 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[m1, m2])/10 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m2])/10 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[m1, m2])/10 -
-		(3*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m2])/10 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m2])/10 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[m1, m2])/10 +
-		(3*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m2])/10 -
-		(CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m3])/10 +
-		(CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m3])/10 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[m1, m3])/10 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[m1, m3])/10 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m3])/10 -
-		(3*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m2]*CPair[m1, m3])/10 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m3])/10 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m3])/10 +
-		(3*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[m1, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m3])/10 -
-		(CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m4])/10 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m4])/10 -
-		(3*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[m1, m4])/10 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m4])/10 +
-		(3*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[m1, m4])/10 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[m1, m4])/10 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m4])/10 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[m1, m4])/10 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m4])/10 +
-		(CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m3])/10 -
-		(CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i4]*CPair[m2, m3])/10 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m3])/10 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[m2, m3])/10 -
-		(3*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m3])/10 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m1]*CPair[m2, m3])/10 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m3])/10 +
-		(3*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[m2, m3])/10 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[m2, m3])/10 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m3])/10 +
-		(CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m4])/10 -
-		(CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i4]*CPair[m2, m4])/10 -
-		(3*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m4])/10 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m1]*CPair[m2, m4])/10 +
-		(3*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[m2, m4])/10 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m3]*CPair[m2, m4])/10 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m4])/10 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m4])/10 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[m2, m4])/10 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m4])/10 -
-		(3*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, i4]*CPair[m3, m4])/10 +
-		(3*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, i4]*CPair[m3, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m1]*CPair[m3, m4])/10 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m1]*CPair[m3, m4])/10 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m2]*CPair[m3, m4])/10 +
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m2]*CPair[m3, m4])/10 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m1]*CPair[m3, m4])/10 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m1]*CPair[m3, m4])/10 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m2]*CPair[m3, m4])/10 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m2]*CPair[m3, m4])/10,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum] CartesianPair[i4_CartesianIndex, m4_CartesianMomentum]] :>
+		-(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/10 -
+		(3*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/10 +
+		(3*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/10 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/10 -
+		(3*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/10 +
+		(3*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/10 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m4])/10 -
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m4])/10 +
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/10 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m2, m3])/10 -
+		(3*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/10 +
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/10 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m2, m4])/10 -
+		(3*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[m2, m4])/10 +
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/10 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/10 -
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m3, m4])/10 +
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m1]*CartesianPair[m3, m4])/10 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m3, m4])/10 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m2]*CartesianPair[m3, m4])/10,
 
 	(* Rank 5*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]*
-		CPair[i4_CIndex, m4_CMomentum] CPair[i5_CIndex, m5_CMomentum]] :>
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/35 +
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/35 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m3])/35 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m4]*CPair[m2, m3])/35 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m4]*CPair[m2, m3])/14 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/35 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/35 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/35 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/35 +
-		(8*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m5]*CPair[m1, m4]*CPair[m2, m3])/35 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m4]*CPair[m2, m3])/14 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m3])/35 -
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m3])/14 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m3])/35 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m3])/35 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m5]*CPair[m2, m3])/14 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m5]*CPair[m2, m3])/35 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/14 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/35 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/35 +
-		(8*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m5]*CPair[m2, m3])/35 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m5]*CPair[m2, m3])/14 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m5]*CPair[m2, m3])/14 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/14 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/35 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/35 +
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/35 +
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m3]*CPair[m2, m4])/35 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/35 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(8*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/14 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m4])/35 -
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m4])/14 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m4])/35 +
-		(8*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m5]*CPair[m2, m4])/35 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/35 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/14 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/35 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/35 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/35 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/35 -
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m5])/35 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(8*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/35 -
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m5])/35 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m5])/14 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(8*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m4]*CPair[m2, m5])/35 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/35 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/35 -
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/14 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/14 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/35 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m5]*CPair[m1, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m2]*CPair[m3, m4])/14 +
-		(8*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m2]*CPair[m3, m4])/35 -
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m3, m4])/14 +
-		(8*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m5]*CPair[m3, m4])/14 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, i5]*CPair[m1, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/14 +
-		(8*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, i4]*CPair[m2, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m5]*CPair[m3, m4])/14 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m5]*CPair[m3, m4])/14 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, i5]*CPair[m2, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/35 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/35 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/14 +
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m5])/35 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m5])/14 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/14 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m2]*CPair[m3, m5])/14 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m2]*CPair[m3, m5])/14 +
-		(8*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/14 +
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i5]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m4]*CPair[m3, m5])/14 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m3, m5])/14 +
-		(8*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/14 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, i4]*CPair[m2, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m4]*CPair[m3, m5])/35 +
-		(8*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m4]*CPair[m3, m5])/14 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/35 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m2]*CPair[m4, m5])/35 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m2]*CPair[m4, m5])/14 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m2]*CPair[m4, m5])/14 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/14 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/14 +
-		(8*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/14 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/35 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/14 +
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i5]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(8*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, i4]*CPair[m2, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m3]*CPair[m4, m5])/35 +
-		(8*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/14 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/14 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/35 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/35 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/35
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]*
+		CartesianPair[i4_CartesianIndex, m4_CartesianMomentum] CartesianPair[i5_CartesianIndex, m5_CartesianMomentum]] :>
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 +
+		(8*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 +
+		(8*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/35 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(8*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 +
+		(8*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/35 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(8*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(8*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/35 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/14 +
+		(8*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 +
+		(8*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/14 +
+		(8*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/14 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 +
+		(8*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 +
+		(8*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 +
+		(8*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/35 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 +
+		(8*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(8*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 +
+		(8*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/35
 };
 
 tensorProjRule2 = {
 	(* Rank 1*)
-	projHead[CPair[_CIndex, _CMomentum ]] :>0,
+	projHead[CartesianPair[_CartesianIndex, _CartesianMomentum ]] :>0,
 
 	(* Rank 2*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum]] :>
-		(CPair[i1, m2]*CPair[i2, m1])/2 + (CPair[i1, m1]*CPair[i2, m2])/2 - (CPair[i1, i2]*CPair[m1, m2])/3,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum]] :>
+		(CartesianPair[i1, m2]*CartesianPair[i2, m1])/2 + (CartesianPair[i1, m1]*CartesianPair[i2, m2])/2 - (CartesianPair[i1, i2]*CartesianPair[m1, m2])/3,
 
 	(* Rank 3*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]] :>
-		-(CPair[i1, m2]*CPair[i2, m3]*CPair[i3, m1])/3 - (CPair[i1, m3]*CPair[i2, m1]*CPair[i3, m2])/3 +
-		(2*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, m3])/3 + (CPair[i1, m3]*CPair[i2, i3]*CPair[m1, m2])/6 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[m1, m2])/6 - (CPair[i1, i2]*CPair[i3, m3]*CPair[m1, m2])/3 +
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[m1, m3])/6 - (CPair[i1, i3]*CPair[i2, m2]*CPair[m1, m3])/3 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[m1, m3])/6 - (CPair[i1, m1]*CPair[i2, i3]*CPair[m2, m3])/3 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[m2, m3])/6 + (CPair[i1, i2]*CPair[i3, m1]*CPair[m2, m3])/6,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]] :>
+		-(CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, m1])/3 - (CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, m2])/3 +
+		(2*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, m3])/3 + (CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[m1, m2])/6 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[m1, m2])/6 - (CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/3 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[m1, m3])/6 - (CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[m1, m3])/3 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[m1, m3])/6 - (CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[m2, m3])/3 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[m2, m3])/6 + (CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[m2, m3])/6,
 
 	(* Rank 4*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum] CPair[i4_CIndex, m4_CMomentum]] :>
-		(2*CPair[i1, m4]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m2])/21 +
-		(2*CPair[i1, m3]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m2])/21 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m2])/14 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[m1, m2])/14 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m2])/14 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[m1, m2])/14 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m2])/14 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[m1, m2])/14 +
-		(11*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m2])/42 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m2])/14 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[m1, m2])/14 +
-		(11*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m2])/42 -
-		(CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m3])/14 -
-		(CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m3])/14 +
-		(2*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m3])/21 -
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[m1, m3])/14 +
-		(2*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m3])/21 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[m1, m3])/14 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m3])/14 +
-		(11*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m2]*CPair[m1, m3])/42 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m3])/14 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m3])/14 +
-		(11*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[m1, m3])/42 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m3])/14 -
-		(CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m4])/14 -
-		(CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m4])/14 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m4])/14 +
-		(11*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[m1, m4])/42 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m4])/14 +
-		(11*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[m1, m4])/42 +
-		(2*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m4])/21 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[m1, m4])/14 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m4])/14 +
-		(2*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m4])/21 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[m1, m4])/14 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m4])/14 -
-		(CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m3])/14 -
-		(CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i4]*CPair[m2, m3])/14 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m3])/14 +
-		(2*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m1]*CPair[m2, m3])/21 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[m2, m3])/14 +
-		(2*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m4]*CPair[m2, m3])/21 +
-		(11*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m3])/42 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m1]*CPair[m2, m3])/14 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m3])/14 +
-		(11*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[m2, m3])/42 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[m2, m3])/14 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m3])/14 -
-		(10*CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m4]*CPair[m2, m3])/21 +
-		(4*CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m4]*CPair[m2, m3])/21 +
-		(4*CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/21 -
-		(CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m4])/14 -
-		(CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i4]*CPair[m2, m4])/14 +
-		(11*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m4])/42 -
-		(CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m1]*CPair[m2, m4])/14 +
-		(11*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[m2, m4])/42 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m3]*CPair[m2, m4])/14 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m4])/14 +
-		(2*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m1]*CPair[m2, m4])/21 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m4])/14 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[m2, m4])/14 +
-		(2*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m3]*CPair[m2, m4])/21 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m4])/14 +
-		(4*CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m3]*CPair[m2, m4])/21 -
-		(10*CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m3]*CPair[m2, m4])/21 +
-		(4*CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/21 +
-		(11*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, i4]*CPair[m3, m4])/42 +
-		(11*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, i4]*CPair[m3, m4])/42 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m1]*CPair[m3, m4])/14 -
-		(CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m1]*CPair[m3, m4])/14 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m1]*CPair[m3, m4])/14 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m1]*CPair[m3, m4])/14 +
-		(2*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m1]*CPair[m3, m4])/21 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m2]*CPair[m3, m4])/14 -
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m2]*CPair[m3, m4])/14 +
-		(2*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m2]*CPair[m3, m4])/21 +
-		(4*CPair[i1, i4]*CPair[i2, i3]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(4*CPair[i1, i3]*CPair[i2, i4]*CPair[m1, m2]*CPair[m3, m4])/21 -
-		(10*CPair[i1, i2]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/21,
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum] CartesianPair[i4_CartesianIndex, m4_CartesianMomentum]] :>
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m2])/21 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m2])/21 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/14 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/42 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/14 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/42 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m3])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m3])/14 +
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m3])/21 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[m1, m3])/14 +
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m3])/21 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[m1, m3])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/14 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/14 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m4])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m4])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m4])/14 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[m1, m4])/42 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m4])/14 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[m1, m4])/42 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/21 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/14 +
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/21 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m3])/14 +
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[m2, m3])/21 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m2, m3])/14 +
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[m2, m3])/21 +
+		(11*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/42 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/14 +
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/42 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/14 -
+		(10*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 +
+		(4*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 +
+		(4*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m4])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m2, m4])/14 +
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m4])/42 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[m2, m4])/14 +
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m2, m4])/42 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[m2, m4])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/14 +
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/21 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/14 +
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/21 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/14 +
+		(4*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 -
+		(10*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 +
+		(4*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 +
+		(11*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m3, m4])/42 +
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m3, m4])/42 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m1]*CartesianPair[m3, m4])/14 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[m3, m4])/21 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m3, m4])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m2]*CartesianPair[m3, m4])/14 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[m3, m4])/21 +
+		(4*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(4*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 -
+		(10*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21,
 
 	(* Rank 5*)
-	projHead[CPair[i1_CIndex, m1_CMomentum ] CPair[i2_CIndex, m2_CMomentum] CPair[i3_CIndex, m3_CMomentum]*
-		CPair[i4_CIndex, m4_CMomentum] CPair[i5_CIndex, m5_CMomentum]] :>
-		(CPair[i1, m5]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m2])/7 +
-		(CPair[i1, m4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m2])/7 -
-		(CPair[i1, m5]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m2])/7 -
-		(CPair[i1, m4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m2])/7 +
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m2])/18 -
-		(5*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m2])/63 +
-		(11*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m3]*CPair[m1, m2])/126 +
-		(5*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m5]*CPair[i4, m3]*CPair[m1, m2])/63 +
-		(CPair[i1, m5]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m2])/14 -
-		(CPair[i1, m3]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m2])/14 -
-		(31*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m2])/126 -
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m2])/9 -
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m4]*CPair[m1, m2])/63 +
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, m4]*CPair[m1, m2])/9 +
-		(CPair[i1, m4]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m2])/14 -
-		(CPair[i1, m3]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m2])/14 -
-		(5*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m5]*CPair[m1, m2])/126 -
-		(2*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, m5]*CPair[m1, m2])/63 +
-		(10*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m5]*CPair[m1, m2])/63 +
-		(2*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, m5]*CPair[m1, m2])/63 +
-		(11*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m2])/126 +
-		(5*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m2])/63 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m2])/18 -
-		(5*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m2])/63 +
-		(2*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/63 +
-		(5*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/126 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m2])/21 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/63 +
-		(19*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/126 -
-		(2*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m2])/7 +
-		(2*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m2])/63 -
-		(13*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m2])/126 +
-		(11*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m2])/126 +
-		(13*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m2])/126 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/63 +
-		(19*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/126 -
-		(2*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m2])/7 -
-		(4*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/63 -
-		(5*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/63 +
-		(2*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m2])/21 -
-		(11*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m2])/63 -
-		(23*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m2])/126 -
-		(11*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m2])/126 +
-		(23*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m2])/126 +
-		(2*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/63 +
-		(5*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/126 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m2])/21 -
-		(2*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/63 -
-		(19*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/63 +
-		(4*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m2])/7 -
-		(5*CPair[i1, m5]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m3])/42 -
-		(5*CPair[i1, m4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m3])/42 +
-		(5*CPair[i1, m5]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m3])/21 -
-		(5*CPair[i1, m2]*CPair[i2, m5]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m3])/42 +
-		(5*CPair[i1, m4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m3])/21 -
-		(5*CPair[i1, m2]*CPair[i2, m4]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m3])/42 -
-		(41*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m3])/252 +
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m3])/9 -
-		(13*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m2]*CPair[m1, m3])/252 -
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m5]*CPair[i4, m2]*CPair[m1, m3])/9 -
-		(CPair[i1, m5]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m3])/4 +
-		(CPair[i1, m2]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m3])/4 +
-		(59*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m3])/252 +
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m3])/18 +
-		(5*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m4]*CPair[m1, m3])/126 -
-		(CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m5]*CPair[i4, m4]*CPair[m1, m3])/18 -
-		(CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m3])/4 +
-		(CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m3])/4 +
-		(31*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m5]*CPair[m1, m3])/252 -
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, m5]*CPair[m1, m3])/18 -
-		(23*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m5]*CPair[m1, m3])/126 +
-		(CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, m5]*CPair[m1, m3])/18 -
-		(13*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m2]*CPair[m1, m3])/252 -
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m4]*CPair[i5, m2]*CPair[m1, m3])/9 -
-		(41*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m3])/252 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m3])/9 +
-		(5*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/126 -
-		(23*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/252 +
-		(5*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m3])/126 +
-		(19*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/126 -
-		(79*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/252 +
-		(19*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m3])/126 -
-		(8*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m4]*CPair[m1, m3])/63 +
-		(7*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i5, m4]*CPair[m1, m3])/36 +
-		(17*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m3])/252 -
-		(7*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i5, m4]*CPair[m1, m3])/36 +
-		(19*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/126 -
-		(79*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/252 +
-		(19*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m3])/126 -
-		(5*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/63 +
-		(23*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/126 -
-		(5*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m5]*CPair[i5, m4]*CPair[m1, m3])/63 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m3])/63 +
-		(11*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m3])/36 +
-		(73*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m3])/252 -
-		(11*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[i5, m5]*CPair[m1, m3])/36 +
-		(5*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/126 -
-		(23*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/252 +
-		(5*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m3])/126 -
-		(19*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/63 +
-		(79*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/126 -
-		(19*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[i5, m5]*CPair[m1, m3])/63 +
-		(3*CPair[i1, m5]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m4])/14 -
-		(3*CPair[i1, m5]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m4])/14 -
-		(3*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m4])/14 +
-		(3*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m4])/14 -
-		(13*CPair[i1, m5]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m4])/84 +
-		(13*CPair[i1, m3]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m4])/84 +
-		(17*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m4])/63 -
-		(11*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m4])/126 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m2]*CPair[m1, m4])/36 +
-		(11*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, m2]*CPair[m1, m4])/126 +
-		(13*CPair[i1, m5]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m4])/84 -
-		(13*CPair[i1, m2]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m4])/84 -
-		(17*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m4])/63 +
-		(11*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m4])/126 -
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m3]*CPair[m1, m4])/36 -
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m5]*CPair[i4, m3]*CPair[m1, m4])/126 +
-		(13*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m4])/42 -
-		(13*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m4])/42 -
-		(61*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m5]*CPair[m1, m4])/252 +
-		(11*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, m5]*CPair[m1, m4])/63 +
-		(61*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m5]*CPair[m1, m4])/252 -
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, m5]*CPair[m1, m4])/63 -
-		(23*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m4])/252 +
-		(61*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m4])/252 +
-		(19*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m4])/126 -
-		(61*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m2]*CPair[m1, m4])/252 +
-		(5*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m4])/63 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m4])/9 +
-		(5*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m4])/63 -
-		(13*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m4])/126 +
-		(7*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m4])/36 -
-		(13*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m2]*CPair[m1, m4])/126 +
-		(23*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m4])/252 -
-		(61*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m4])/252 -
-		(19*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m4])/126 +
-		(61*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m5]*CPair[i5, m3]*CPair[m1, m4])/252 -
-		(5*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m4])/63 +
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m4])/9 -
-		(5*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m4])/63 +
-		(13*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m4])/126 -
-		(7*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m4])/36 +
-		(13*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m5]*CPair[i5, m3]*CPair[m1, m4])/126 +
-		(61*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m4])/252 -
-		(61*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[i5, m5]*CPair[m1, m4])/126 -
-		(61*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m4])/252 +
-		(61*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[i5, m5]*CPair[m1, m4])/126 -
-		(23*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m4])/126 +
-		(11*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m4])/36 -
-		(23*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[i5, m5]*CPair[m1, m4])/126 +
-		(23*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m4])/126 -
-		(11*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m4])/36 +
-		(23*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[i5, m5]*CPair[m1, m4])/126 +
-		(2*CPair[i1, m4]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m5])/63 +
-		(4*CPair[i1, m3]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m5])/63 -
-		(2*CPair[i1, m4]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m5])/63 -
-		(4*CPair[i1, m2]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m5])/63 +
-		(2*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m5])/63 -
-		(2*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m5])/63 +
-		(11*CPair[i1, m4]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m5])/126 -
-		(11*CPair[i1, m3]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m5])/126 -
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m5])/7 +
-		(11*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, m2]*CPair[m1, m5])/63 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m5])/42 -
-		(11*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, m2]*CPair[m1, m5])/63 -
-		(11*CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m5])/126 +
-		(11*CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m5])/126 +
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m5])/7 -
-		(11*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, m3]*CPair[m1, m5])/63 -
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m5])/42 +
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, m3]*CPair[m1, m5])/63 -
-		(11*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m5])/63 +
-		(11*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m5])/63 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m5])/6 -
-		(22*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, m4]*CPair[m1, m5])/63 -
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m5])/6 +
-		(22*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, m4]*CPair[m1, m5])/63 +
-		(19*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m5])/126 -
-		(11*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[i5, m2]*CPair[m1, m5])/126 -
-		(2*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m2]*CPair[m1, m5])/63 +
-		(11*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[i5, m2]*CPair[m1, m5])/126 -
-		(5*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m5])/63 +
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m5])/9 -
-		(5*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[i5, m2]*CPair[m1, m5])/63 +
-		(2*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m5])/63 +
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m5])/18 -
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m1, m5])/9 -
-		(19*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m5])/126 +
-		(11*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[i5, m3]*CPair[m1, m5])/126 +
-		(2*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m5])/63 -
-		(11*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[i5, m3]*CPair[m1, m5])/126 +
-		(5*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m5])/63 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m5])/9 +
-		(5*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m2]*CPair[i5, m3]*CPair[m1, m5])/63 -
-		(2*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m5])/63 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m5])/18 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[i5, m3]*CPair[m1, m5])/9 -
-		(23*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m4]*CPair[m1, m5])/126 +
-		(11*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[i5, m4]*CPair[m1, m5])/63 +
-		(23*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m5])/126 -
-		(11*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[i5, m4]*CPair[m1, m5])/63 +
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m5])/9 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m5])/18 -
-		(2*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m1, m5])/63 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m5])/9 +
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m5])/18 +
-		(2*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[i5, m4]*CPair[m1, m5])/63 -
-		(CPair[i1, m5]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, i5]*CPair[m2, m3])/7 +
-		(CPair[i1, m1]*CPair[i2, m5]*CPair[i3, m4]*CPair[i4, i5]*CPair[m2, m3])/7 -
-		(CPair[i1, m4]*CPair[i2, m1]*CPair[i3, m5]*CPair[i4, i5]*CPair[m2, m3])/7 +
-		(CPair[i1, m1]*CPair[i2, m4]*CPair[i3, m5]*CPair[i4, i5]*CPair[m2, m3])/7 +
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m3])/6 -
-		(5*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m3])/63 -
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m1]*CPair[m2, m3])/42 +
-		(5*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m5]*CPair[i4, m1]*CPair[m2, m3])/63 +
-		(3*CPair[i1, m5]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m4]*CPair[m2, m3])/14 -
-		(3*CPair[i1, m1]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m4]*CPair[m2, m3])/14 -
-		(5*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m3])/42 +
-		(2*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m3])/63 -
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m4]*CPair[m2, m3])/7 -
-		(2*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m5]*CPair[i4, m4]*CPair[m2, m3])/63 +
-		(3*CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m5]*CPair[m2, m3])/14 -
-		(3*CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m5]*CPair[m2, m3])/14 -
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m5]*CPair[m2, m3])/42 +
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m1]*CPair[i4, m5]*CPair[m2, m3])/9 +
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m5]*CPair[m2, m3])/7 -
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, m5]*CPair[m2, m3])/9 -
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m1]*CPair[m2, m3])/42 +
-		(5*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m4]*CPair[i5, m1]*CPair[m2, m3])/63 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m3])/6 -
-		(5*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m3])/63 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/21 +
-		(5*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/126 +
-		(2*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m3])/63 -
-		(2*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/7 +
-		(19*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/126 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m3])/63 +
-		(4*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m4]*CPair[m2, m3])/21 -
-		(13*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m1]*CPair[i5, m4]*CPair[m2, m3])/126 -
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m4]*CPair[m2, m3])/14 +
-		(13*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m5]*CPair[i5, m4]*CPair[m2, m3])/126 -
-		(2*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/7 +
-		(19*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/126 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m3])/63 +
-		(2*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/21 -
-		(5*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/63 -
-		(4*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m5]*CPair[i5, m4]*CPair[m2, m3])/63 +
-		(2*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m3])/21 -
-		(23*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m3])/126 -
-		(5*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m5]*CPair[m2, m3])/14 +
-		(23*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m4]*CPair[i5, m5]*CPair[m2, m3])/126 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/21 +
-		(5*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/126 +
-		(2*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m3])/63 +
-		(4*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/7 -
-		(19*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/63 -
-		(2*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[i5, m5]*CPair[m2, m3])/63 -
-		(CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/42 +
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m3])/42 -
-		(4*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m3])/21 +
-		(5*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m3])/42 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m4]*CPair[m2, m3])/14 +
-		(5*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/21 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/6 -
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m3])/42 +
-		(2*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/21 -
-		(2*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/21 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m4]*CPair[m2, m3])/42 -
-		(11*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m5]*CPair[m1, m4]*CPair[m2, m3])/42 +
-		(11*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m4]*CPair[m2, m3])/42 +
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m3])/42 -
-		(2*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m3])/21 -
-		(5*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m3])/21 +
-		(5*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m3])/21 +
-		(2*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m5]*CPair[m2, m3])/7 -
-		(2*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m5]*CPair[m2, m3])/7 +
-		(5*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/21 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/6 -
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m3])/42 -
-		(11*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m5]*CPair[m2, m3])/42 +
-		(11*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m5]*CPair[m2, m3])/42 +
-		(2*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/21 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/21 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m5]*CPair[m2, m3])/42 -
-		(CPair[i1, m3]*CPair[i2, m5]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m4])/42 +
-		(5*CPair[i1, m5]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, i5]*CPair[m2, m4])/42 -
-		(3*CPair[i1, m1]*CPair[i2, m5]*CPair[i3, m3]*CPair[i4, i5]*CPair[m2, m4])/14 +
-		(3*CPair[i1, m3]*CPair[i2, m1]*CPair[i3, m5]*CPair[i4, i5]*CPair[m2, m4])/14 -
-		(2*CPair[i1, m1]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, i5]*CPair[m2, m4])/21 +
-		(CPair[i1, m5]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m4])/28 -
-		(CPair[i1, m3]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m4])/28 -
-		(3*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m4])/28 +
-		(19*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m4])/126 +
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m1]*CPair[m2, m4])/21 -
-		(19*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m5]*CPair[i4, m1]*CPair[m2, m4])/126 -
-		(3*CPair[i1, m5]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m3]*CPair[m2, m4])/14 +
-		(3*CPair[i1, m1]*CPair[i2, m5]*CPair[i3, i5]*CPair[i4, m3]*CPair[m2, m4])/14 +
-		(19*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m4])/84 -
-		(2*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m4])/63 +
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m5]*CPair[i4, m3]*CPair[m2, m4])/84 +
-		(2*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m5]*CPair[i4, m3]*CPair[m2, m4])/63 -
-		(CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m5]*CPair[m2, m4])/4 +
-		(CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m5]*CPair[m2, m4])/4 +
-		(2*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m5]*CPair[m2, m4])/21 -
-		(23*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m1]*CPair[i4, m5]*CPair[m2, m4])/126 -
-		(23*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m5]*CPair[m2, m4])/84 +
-		(23*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, m5]*CPair[m2, m4])/126 +
-		(CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m4])/42 -
-		(23*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m4])/252 -
-		(9*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m4])/28 +
-		(23*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m5]*CPair[i5, m1]*CPair[m2, m4])/252 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m4])/42 -
-		(13*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m4])/252 +
-		(11*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m4])/126 +
-		(4*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m4])/21 -
-		(8*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m4])/63 +
-		(2*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m5]*CPair[i5, m1]*CPair[m2, m4])/63 -
-		(9*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m4])/28 +
-		(19*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m4])/126 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m5]*CPair[i5, m3]*CPair[m2, m4])/12 -
-		(19*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m5]*CPair[i5, m3]*CPair[m2, m4])/126 +
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m4])/6 -
-		(41*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m4])/252 +
-		(CPair[i1, i2]*CPair[i3, m5]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m4])/18 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m5]*CPair[i5, m3]*CPair[m2, m4])/14 +
-		(17*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m5]*CPair[i5, m3]*CPair[m2, m4])/252 +
-		(11*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m5]*CPair[i5, m3]*CPair[m2, m4])/126 -
-		(3*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m4])/28 +
-		(61*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m1]*CPair[i5, m5]*CPair[m2, m4])/252 +
-		(9*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m5]*CPair[m2, m4])/14 -
-		(61*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m3]*CPair[i5, m5]*CPair[m2, m4])/252 +
-		(2*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m4])/21 -
-		(CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m4])/63 -
-		(11*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[i5, m5]*CPair[m2, m4])/63 -
-		(5*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m5]*CPair[m2, m4])/14 +
-		(73*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m3]*CPair[i5, m5]*CPair[m2, m4])/252 -
-		(11*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m3]*CPair[i5, m5]*CPair[m2, m4])/126 -
-		(2*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/21 -
-		(CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m4])/7 +
-		(19*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m4])/42 -
-		(2*CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m4])/7 +
-		(13*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m3]*CPair[m2, m4])/42 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m3]*CPair[m2, m4])/21 -
-		(2*CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/7 +
-		(23*CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/42 -
-		(2*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m4])/7 -
-		(2*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/21 +
-		(3*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/14 -
-		(2*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m3]*CPair[m2, m4])/21 +
-		(11*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/42 -
-		(17*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/21 +
-		(11*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m3]*CPair[m2, m4])/42 -
-		(CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m4])/6 +
-		(3*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m5]*CPair[m2, m4])/7 +
-		(25*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m4])/42 -
-		(4*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m5]*CPair[m2, m4])/7 -
-		(13*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(9*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m5]*CPair[m2, m4])/14 -
-		(5*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(5*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/42 +
-		(5*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m2, m4])/21 +
-		(2*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/7 -
-		(8*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/21 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m5]*CPair[m2, m4])/42 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/14 +
-		(13*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/42 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m5]*CPair[m2, m4])/6 +
-		(23*CPair[i1, m4]*CPair[i2, m3]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m5])/126 -
-		(11*CPair[i1, m3]*CPair[i2, m4]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m5])/126 -
-		(4*CPair[i1, m4]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, i5]*CPair[m2, m5])/63 -
-		(19*CPair[i1, m1]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, i5]*CPair[m2, m5])/126 -
-		(2*CPair[i1, m3]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, i5]*CPair[m2, m5])/63 +
-		(19*CPair[i1, m1]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, i5]*CPair[m2, m5])/126 -
-		(13*CPair[i1, m4]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m5])/63 +
-		(13*CPair[i1, m3]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m5])/63 +
-		(7*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m5])/36 -
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m3]*CPair[i4, m1]*CPair[m2, m5])/7 -
-		(79*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m5])/252 +
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m4]*CPair[i4, m1]*CPair[m2, m5])/7 +
-		(CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m3]*CPair[m2, m5])/36 -
-		(CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m3]*CPair[m2, m5])/36 -
-		(79*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m5])/252 +
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m1]*CPair[i4, m3]*CPair[m2, m5])/42 -
-		(13*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m3]*CPair[m2, m5])/126 -
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, m3]*CPair[m2, m5])/42 +
-		(59*CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m4]*CPair[m2, m5])/252 -
-		(59*CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m4]*CPair[m2, m5])/252 -
-		(23*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m5])/252 +
-		(CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m1]*CPair[i4, m4]*CPair[m2, m5])/6 +
-		(79*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m4]*CPair[m2, m5])/126 -
-		(CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, m4]*CPair[m2, m5])/6 -
-		(3*CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m5])/28 +
-		(17*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m3]*CPair[i5, m1]*CPair[m2, m5])/63 +
-		(19*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m1]*CPair[m2, m5])/84 -
-		(17*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m4]*CPair[i5, m1]*CPair[m2, m5])/63 +
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m5])/6 -
-		(41*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m5])/252 +
-		(CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m3]*CPair[i5, m1]*CPair[m2, m5])/18 -
-		(5*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m5])/42 +
-		(59*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m5])/252 -
-		(31*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m2, m5])/126 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m5])/21 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m1]*CPair[i5, m3]*CPair[m2, m5])/36 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m3]*CPair[m2, m5])/84 -
-		(CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m4]*CPair[i5, m3]*CPair[m2, m5])/36 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m5])/42 -
-		(13*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m5])/252 +
-		(11*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, m1]*CPair[i5, m3]*CPair[m2, m5])/126 -
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m3]*CPair[m2, m5])/7 +
-		(5*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[i5, m3]*CPair[m2, m5])/126 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[i5, m3]*CPair[m2, m5])/63 +
-		(2*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m4]*CPair[m2, m5])/21 -
-		(61*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m1]*CPair[i5, m4]*CPair[m2, m5])/252 -
-		(23*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m4]*CPair[m2, m5])/84 +
-		(61*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m3]*CPair[i5, m4]*CPair[m2, m5])/252 -
-		(CPair[i1, m3]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m5])/42 +
-		(31*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m5])/252 -
-		(5*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m2, m5])/126 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m4]*CPair[m2, m5])/7 -
-		(23*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m3]*CPair[i5, m4]*CPair[m2, m5])/126 +
-		(10*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m3]*CPair[i5, m4]*CPair[m2, m5])/63 +
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m5])/42 +
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m3]*CPair[m2, m5])/7 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m5])/3 -
-		(4*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m2, m5])/7 -
-		(8*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m3]*CPair[m2, m5])/21 +
-		(31*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m3]*CPair[m2, m5])/42 -
-		(2*CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/7 +
-		(23*CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/42 -
-		(2*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m3]*CPair[m2, m5])/7 +
-		(11*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/42 -
-		(17*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/21 +
-		(11*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m3]*CPair[m2, m5])/42 -
-		(2*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/21 +
-		(3*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/14 -
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m3]*CPair[m2, m5])/21 +
-		(13*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m5])/42 -
-		(2*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m4]*CPair[m2, m5])/7 -
-		(17*CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m5])/21 +
-		(15*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(9*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m4]*CPair[m2, m5])/14 -
-		(9*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m4]*CPair[m2, m5])/7 +
-		(8*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/21 -
-		(17*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/21 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m2, m5])/2 -
-		(2*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/7 +
-		(31*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/42 -
-		(5*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m4]*CPair[m2, m5])/21 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/21 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m4]*CPair[m2, m5])/21 +
-		(2*CPair[i1, m5]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(2*CPair[i1, i5]*CPair[i2, m5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m4])/21 -
-		(2*CPair[i1, m5]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(CPair[i1, i4]*CPair[i2, m5]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m4])/21 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m5]*CPair[m1, m2]*CPair[m3, m4])/6 -
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m5]*CPair[m1, m2]*CPair[m3, m4])/21 -
-		(CPair[i1, m5]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/42 -
-		(CPair[i1, i3]*CPair[i2, m5]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/6 +
-		(5*CPair[i1, i2]*CPair[i3, m5]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(2*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m5]*CPair[m1, m2]*CPair[m3, m4])/21 +
-		(11*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m5]*CPair[m1, m2]*CPair[m3, m4])/42 -
-		(11*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m5]*CPair[m1, m2]*CPair[m3, m4])/42 +
-		(2*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m5]*CPair[m3, m4])/21 -
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m5]*CPair[m3, m4])/42 -
-		(5*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m5]*CPair[m3, m4])/21 +
-		(11*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m5]*CPair[m3, m4])/42 +
-		(3*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m5]*CPair[m3, m4])/7 -
-		(2*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m5]*CPair[m3, m4])/7 +
-		(5*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m5]*CPair[m3, m4])/42 -
-		(5*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m5]*CPair[m3, m4])/42 -
-		(2*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/21 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/7 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m5]*CPair[m3, m4])/42 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/42 -
-		(CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/7 +
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m5]*CPair[m3, m4])/21 -
-		(11*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, i4]*CPair[m2, m5]*CPair[m3, m4])/42 +
-		(2*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m5]*CPair[m3, m4])/21 +
-		(11*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m5]*CPair[m3, m4])/42 -
-		(5*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m5]*CPair[m3, m4])/21 -
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m5]*CPair[m3, m4])/6 +
-		(13*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m5]*CPair[m3, m4])/42 +
-		(5*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m5]*CPair[m3, m4])/42 -
-		(5*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m5]*CPair[m3, m4])/42 +
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/42 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/42 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m5]*CPair[m3, m4])/42 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/21 +
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m5]*CPair[m3, m4])/21 -
-		(23*CPair[i1, m4]*CPair[i2, m2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m3, m5])/126 +
-		(4*CPair[i1, m2]*CPair[i2, m4]*CPair[i3, m1]*CPair[i4, i5]*CPair[m3, m5])/63 +
-		(23*CPair[i1, m4]*CPair[i2, m1]*CPair[i3, m2]*CPair[i4, i5]*CPair[m3, m5])/126 -
-		(4*CPair[i1, m1]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, i5]*CPair[m3, m5])/63 +
-		(31*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, i5]*CPair[m3, m5])/126 -
-		(31*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m3, m5])/126 +
-		(61*CPair[i1, m4]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m3, m5])/252 -
-		(61*CPair[i1, m2]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m1]*CPair[m3, m5])/252 -
-		(13*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m1]*CPair[m3, m5])/63 +
-		(11*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m2]*CPair[i4, m1]*CPair[m3, m5])/126 +
-		(CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m1]*CPair[m3, m5])/36 -
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m4]*CPair[i4, m1]*CPair[m3, m5])/126 -
-		(61*CPair[i1, m4]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m2]*CPair[m3, m5])/252 +
-		(61*CPair[i1, m1]*CPair[i2, m4]*CPair[i3, i5]*CPair[i4, m2]*CPair[m3, m5])/252 +
-		(13*CPair[i1, m4]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m2]*CPair[m3, m5])/63 -
-		(11*CPair[i1, i5]*CPair[i2, m4]*CPair[i3, m1]*CPair[i4, m2]*CPair[m3, m5])/126 -
-		(CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m4]*CPair[i4, m2]*CPair[m3, m5])/36 +
-		(11*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m4]*CPair[i4, m2]*CPair[m3, m5])/126 -
-		(61*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m4]*CPair[m3, m5])/126 +
-		(61*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m3, m5])/126 +
-		(59*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m4]*CPair[m3, m5])/252 -
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m1]*CPair[i4, m4]*CPair[m3, m5])/63 -
-		(59*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m4]*CPair[m3, m5])/252 +
-		(11*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m2]*CPair[i4, m4]*CPair[m3, m5])/63 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m1]*CPair[m3, m5])/28 -
-		(13*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m2]*CPair[i5, m1]*CPair[m3, m5])/84 -
-		(3*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m1]*CPair[m3, m5])/14 +
-		(13*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m4]*CPair[i5, m1]*CPair[m3, m5])/84 +
-		(3*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m1]*CPair[m3, m5])/14 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m4]*CPair[i5, m1]*CPair[m3, m5])/4 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m4]*CPair[i5, m1]*CPair[m3, m5])/14 -
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m2]*CPair[m3, m5])/28 +
-		(13*CPair[i1, i4]*CPair[i2, m4]*CPair[i3, m1]*CPair[i5, m2]*CPair[m3, m5])/84 +
-		(3*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m4]*CPair[i5, m2]*CPair[m3, m5])/14 -
-		(13*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m4]*CPair[i5, m2]*CPair[m3, m5])/84 -
-		(3*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m4]*CPair[i5, m2]*CPair[m3, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m4]*CPair[i5, m2]*CPair[m3, m5])/4 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m4]*CPair[i5, m2]*CPair[m3, m5])/14 -
-		(CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m4]*CPair[m3, m5])/4 +
-		(13*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m1]*CPair[i5, m4]*CPair[m3, m5])/42 +
-		(CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m4]*CPair[m3, m5])/4 -
-		(13*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m2]*CPair[i5, m4]*CPair[m3, m5])/42 +
-		(3*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m4]*CPair[m3, m5])/14 -
-		(CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m1]*CPair[i5, m4]*CPair[m3, m5])/4 +
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m1]*CPair[i5, m4]*CPair[m3, m5])/14 -
-		(3*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m4]*CPair[m3, m5])/14 +
-		(CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m2]*CPair[i5, m4]*CPair[m3, m5])/4 -
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, m2]*CPair[i5, m4]*CPair[m3, m5])/14 -
-		(CPair[i1, m4]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m5])/42 -
-		(CPair[i1, i5]*CPair[i2, m4]*CPair[i3, i4]*CPair[m1, m2]*CPair[m3, m5])/42 +
-		(CPair[i1, m4]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m5])/42 +
-		(CPair[i1, i4]*CPair[i2, m4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m3, m5])/6 +
-		(CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m4]*CPair[m1, m2]*CPair[m3, m5])/42 -
-		(5*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m4]*CPair[m1, m2]*CPair[m3, m5])/21 -
-		(CPair[i1, m4]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/42 -
-		(CPair[i1, i3]*CPair[i2, m4]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/6 +
-		(5*CPair[i1, i2]*CPair[i3, m4]*CPair[i4, i5]*CPair[m1, m2]*CPair[m3, m5])/21 +
-		(11*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m4]*CPair[m1, m2]*CPair[m3, m5])/42 -
-		(11*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m4]*CPair[m1, m2]*CPair[m3, m5])/42 +
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/21 +
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m4]*CPair[m1, m2]*CPair[m3, m5])/21 -
-		(5*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m4]*CPair[m3, m5])/21 +
-		(11*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, i4]*CPair[m1, m4]*CPair[m3, m5])/42 +
-		(43*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m4]*CPair[m3, m5])/42 -
-		(25*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m4]*CPair[m3, m5])/21 -
-		(4*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m4]*CPair[m3, m5])/7 +
-		(15*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m4]*CPair[m3, m5])/14 -
-		(13*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/21 +
-		(13*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/14 -
-		(8*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m4]*CPair[m3, m5])/21 +
-		(5*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/21 -
-		(4*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/7 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m4]*CPair[m3, m5])/6 +
-		(5*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/7 +
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m4]*CPair[m3, m5])/21 +
-		(11*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, i4]*CPair[m2, m4]*CPair[m3, m5])/42 -
-		(5*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m4]*CPair[m3, m5])/21 -
-		(25*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(43*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m4]*CPair[m3, m5])/42 +
-		(25*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m4]*CPair[m3, m5])/42 -
-		(17*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(31*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/42 -
-		(17*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m4]*CPair[m3, m5])/7 -
-		(5*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/3 +
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m4]*CPair[m3, m5])/42 -
-		(4*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(19*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/42 -
-		(2*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m4]*CPair[m3, m5])/21 +
-		(10*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m4, m5])/63 -
-		(16*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, m1]*CPair[i4, i5]*CPair[m4, m5])/63 -
-		(16*CPair[i1, m3]*CPair[i2, m1]*CPair[i3, m2]*CPair[i4, i5]*CPair[m4, m5])/63 -
-		(5*CPair[i1, m1]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, i5]*CPair[m4, m5])/63 -
-		(5*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, i5]*CPair[m4, m5])/63 +
-		(32*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m4, m5])/63 -
-		(23*CPair[i1, m3]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m4, m5])/126 +
-		(23*CPair[i1, m2]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m1]*CPair[m4, m5])/126 +
-		(23*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m1]*CPair[m4, m5])/126 +
-		(2*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m2]*CPair[i4, m1]*CPair[m4, m5])/63 -
-		(4*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m1]*CPair[m4, m5])/63 -
-		(2*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m3]*CPair[i4, m1]*CPair[m4, m5])/63 +
-		(4*CPair[i1, m3]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m2]*CPair[m4, m5])/63 -
-		(4*CPair[i1, m1]*CPair[i2, m3]*CPair[i3, i5]*CPair[i4, m2]*CPair[m4, m5])/63 -
-		(11*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m2]*CPair[m4, m5])/126 +
-		(4*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, m1]*CPair[i4, m2]*CPair[m4, m5])/63 -
-		(19*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m3]*CPair[i4, m2]*CPair[m4, m5])/126 -
-		(4*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m3]*CPair[i4, m2]*CPair[m4, m5])/63 +
-		(31*CPair[i1, m2]*CPair[i2, m1]*CPair[i3, i5]*CPair[i4, m3]*CPair[m4, m5])/126 -
-		(31*CPair[i1, m1]*CPair[i2, m2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m4, m5])/126 -
-		(2*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, m1]*CPair[i4, m3]*CPair[m4, m5])/63 +
-		(2*CPair[i1, i5]*CPair[i2, m2]*CPair[i3, m1]*CPair[i4, m3]*CPair[m4, m5])/63 +
-		(19*CPair[i1, m1]*CPair[i2, i5]*CPair[i3, m2]*CPair[i4, m3]*CPair[m4, m5])/126 -
-		(2*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, m2]*CPair[i4, m3]*CPair[m4, m5])/63 +
-		(3*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, m2]*CPair[i5, m1]*CPair[m4, m5])/14 +
-		(5*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m1]*CPair[m4, m5])/42 -
-		(3*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m3]*CPair[i5, m1]*CPair[m4, m5])/14 -
-		(5*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m2]*CPair[i5, m1]*CPair[m4, m5])/42 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m2]*CPair[i5, m1]*CPair[m4, m5])/7 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m1]*CPair[m4, m5])/7 +
-		(5*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m3]*CPair[i5, m1]*CPair[m4, m5])/21 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m3]*CPair[i5, m1]*CPair[m4, m5])/7 -
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m2]*CPair[m4, m5])/42 -
-		(3*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m3]*CPair[i5, m2]*CPair[m4, m5])/14 -
-		(5*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, m1]*CPair[i5, m2]*CPair[m4, m5])/42 +
-		(CPair[i1, i2]*CPair[i3, m3]*CPair[i4, m1]*CPair[i5, m2]*CPair[m4, m5])/7 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m3]*CPair[i5, m2]*CPair[m4, m5])/7 -
-		(5*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m3]*CPair[i5, m2]*CPair[m4, m5])/42 +
-		(3*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, m1]*CPair[i5, m3]*CPair[m4, m5])/14 -
-		(3*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, m1]*CPair[i5, m3]*CPair[m4, m5])/14 -
-		(2*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, m2]*CPair[i5, m3]*CPair[m4, m5])/21 +
-		(3*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, m2]*CPair[i5, m3]*CPair[m4, m5])/14 -
-		(CPair[i1, m2]*CPair[i2, i3]*CPair[i4, m1]*CPair[i5, m3]*CPair[m4, m5])/7 +
-		(5*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, m1]*CPair[i5, m3]*CPair[m4, m5])/21 -
-		(CPair[i1, i2]*CPair[i3, m2]*CPair[i4, m1]*CPair[i5, m3]*CPair[m4, m5])/7 +
-		(CPair[i1, m1]*CPair[i2, i3]*CPair[i4, m2]*CPair[i5, m3]*CPair[m4, m5])/7 -
-		(5*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, m2]*CPair[i5, m3]*CPair[m4, m5])/42 -
-		(5*CPair[i1, m3]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m2]*CPair[m4, m5])/42 -
-		(5*CPair[i1, i5]*CPair[i2, m3]*CPair[i3, i4]*CPair[m1, m2]*CPair[m4, m5])/42 +
-		(CPair[i1, m3]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m2]*CPair[m4, m5])/7 -
-		(8*CPair[i1, i4]*CPair[i2, m3]*CPair[i3, i5]*CPair[m1, m2]*CPair[m4, m5])/21 +
-		(5*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m3]*CPair[m1, m2]*CPair[m4, m5])/21 +
-		(CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m3]*CPair[m1, m2]*CPair[m4, m5])/2 +
-		(2*CPair[i1, m3]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/21 +
-		(13*CPair[i1, i3]*CPair[i2, m3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/21 -
-		(5*CPair[i1, i2]*CPair[i3, m3]*CPair[i4, i5]*CPair[m1, m2]*CPair[m4, m5])/6 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/7 +
-		(5*CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m3]*CPair[m1, m2]*CPair[m4, m5])/21 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/42 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/7 +
-		(5*CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m3]*CPair[m1, m2]*CPair[m4, m5])/21 +
-		(5*CPair[i1, m2]*CPair[i2, i5]*CPair[i3, i4]*CPair[m1, m3]*CPair[m4, m5])/42 -
-		(17*CPair[i1, m2]*CPair[i2, i4]*CPair[i3, i5]*CPair[m1, m3]*CPair[m4, m5])/21 +
-		(13*CPair[i1, i4]*CPair[i2, m2]*CPair[i3, i5]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(5*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m2]*CPair[m1, m3]*CPair[m4, m5])/42 -
-		(17*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m2]*CPair[m1, m3]*CPair[m4, m5])/21 +
-		(13*CPair[i1, m2]*CPair[i2, i3]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/21 -
-		(17*CPair[i1, i3]*CPair[i2, m2]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/14 +
-		(13*CPair[i1, i2]*CPair[i3, m2]*CPair[i4, i5]*CPair[m1, m3]*CPair[m4, m5])/21 -
-		(CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/6 +
-		(23*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/42 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m2]*CPair[m1, m3]*CPair[m4, m5])/6 -
-		(CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/6 +
-		(23*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/42 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m2]*CPair[m1, m3]*CPair[m4, m5])/6 +
-		(5*CPair[i1, i5]*CPair[i2, m1]*CPair[i3, i4]*CPair[m2, m3]*CPair[m4, m5])/42 +
-		(31*CPair[i1, m1]*CPair[i2, i4]*CPair[i3, i5]*CPair[m2, m3]*CPair[m4, m5])/42 -
-		(13*CPair[i1, i4]*CPair[i2, m1]*CPair[i3, i5]*CPair[m2, m3]*CPair[m4, m5])/21 -
-		(5*CPair[i1, i5]*CPair[i2, i4]*CPair[i3, m1]*CPair[m2, m3]*CPair[m4, m5])/14 +
-		(8*CPair[i1, i4]*CPair[i2, i5]*CPair[i3, m1]*CPair[m2, m3]*CPair[m4, m5])/21 -
-		(5*CPair[i1, m1]*CPair[i2, i3]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/6 +
-		(13*CPair[i1, i3]*CPair[i2, m1]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/21 +
-		(2*CPair[i1, i2]*CPair[i3, m1]*CPair[i4, i5]*CPair[m2, m3]*CPair[m4, m5])/21 +
-		(5*CPair[i1, i5]*CPair[i2, i3]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/21 -
-		(2*CPair[i1, i3]*CPair[i2, i5]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/7 -
-		(CPair[i1, i2]*CPair[i3, i5]*CPair[i4, m1]*CPair[m2, m3]*CPair[m4, m5])/42 +
-		(5*CPair[i1, i4]*CPair[i2, i3]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/21 -
-		(2*CPair[i1, i3]*CPair[i2, i4]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/7 -
-		(CPair[i1, i2]*CPair[i3, i4]*CPair[i5, m1]*CPair[m2, m3]*CPair[m4, m5])/42
+	projHead[CartesianPair[i1_CartesianIndex, m1_CartesianMomentum ] CartesianPair[i2_CartesianIndex, m2_CartesianMomentum] CartesianPair[i3_CartesianIndex, m3_CartesianMomentum]*
+		CartesianPair[i4_CartesianIndex, m4_CartesianMomentum] CartesianPair[i5_CartesianIndex, m5_CartesianMomentum]] :>
+		(CartesianPair[i1, m5]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2])/7 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2])/7 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m2])/7 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m2])/7 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/18 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/63 +
+		(11*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/126 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m1, m2])/63 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/14 -
+		(31*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/126 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/9 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/63 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m1, m2])/9 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/14 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/14 -
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/126 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/63 +
+		(10*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/63 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m1, m2])/63 +
+		(11*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/126 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/63 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/18 -
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/63 +
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/63 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/126 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/21 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/63 +
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/126 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m2])/7 +
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/63 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/126 +
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/126 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/126 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/63 +
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/126 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/7 -
+		(4*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/63 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/63 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m2])/21 -
+		(11*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/63 -
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/126 -
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/126 +
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/126 +
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/63 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/126 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/21 -
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/63 -
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/63 +
+		(4*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m2])/7 -
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/42 -
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/42 +
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/21 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/42 +
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/21 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3])/42 -
+		(41*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/252 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/9 -
+		(13*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/252 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[m1, m3])/9 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/4 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/4 +
+		(59*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/252 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/18 +
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/126 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m1, m3])/18 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/4 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/4 +
+		(31*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/252 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/18 -
+		(23*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/126 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m1, m3])/18 -
+		(13*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/252 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/9 -
+		(41*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/252 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/9 +
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/126 -
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/252 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/126 +
+		(19*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/126 -
+		(79*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/252 +
+		(19*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m3])/126 -
+		(8*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/63 +
+		(7*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/36 +
+		(17*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/252 -
+		(7*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/36 +
+		(19*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/126 -
+		(79*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/252 +
+		(19*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/126 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/63 +
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/126 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m1, m3])/63 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/63 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/36 +
+		(73*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/252 -
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/36 +
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/126 -
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/252 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/126 -
+		(19*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/63 +
+		(79*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/126 -
+		(19*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m1, m3])/63 +
+		(3*CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m4])/14 -
+		(3*CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m4])/14 -
+		(3*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4])/14 +
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4])/14 -
+		(13*CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/84 +
+		(13*CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/84 +
+		(17*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/63 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/126 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/36 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[m1, m4])/126 +
+		(13*CartesianPair[i1, m5]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/84 -
+		(13*CartesianPair[i1, m2]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/84 -
+		(17*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/63 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/126 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/36 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m1, m4])/126 +
+		(13*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/42 -
+		(13*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/42 -
+		(61*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/252 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/63 +
+		(61*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/252 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m1, m4])/63 -
+		(23*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/252 +
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/252 +
+		(19*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/126 -
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/252 +
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/63 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/9 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/63 -
+		(13*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/126 +
+		(7*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/36 -
+		(13*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m2]*CartesianPair[m1, m4])/126 +
+		(23*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/252 -
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/252 -
+		(19*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/126 +
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/252 -
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/63 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/9 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/63 +
+		(13*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/126 -
+		(7*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/36 +
+		(13*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m1, m4])/126 +
+		(61*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/252 -
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 -
+		(61*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/252 +
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 -
+		(23*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/36 -
+		(23*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 +
+		(23*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 -
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/36 +
+		(23*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m1, m4])/126 +
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 +
+		(4*CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 -
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 -
+		(4*CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 -
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5])/63 +
+		(11*CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/126 -
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/126 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/7 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/63 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/42 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m1, m5])/63 -
+		(11*CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/126 +
+		(11*CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/126 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/7 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/42 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m1, m5])/63 -
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/63 +
+		(11*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/63 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/6 -
+		(22*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/6 +
+		(22*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m1, m5])/63 +
+		(19*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/126 -
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/126 -
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/63 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/126 -
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/63 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/9 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/63 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/63 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/18 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m1, m5])/9 -
+		(19*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/126 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/126 +
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/63 -
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/126 +
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/9 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/63 -
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/18 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m1, m5])/9 -
+		(23*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/126 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/63 +
+		(23*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/126 -
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/63 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/9 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/18 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/9 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/18 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m1, m5])/63 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m2, m3])/7 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m2, m3])/7 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m2, m3])/7 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m2, m3])/7 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/6 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/63 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/42 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[m2, m3])/63 +
+		(3*CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/14 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/14 -
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/42 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/63 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/7 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[m2, m3])/63 +
+		(3*CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/14 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/42 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/9 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/7 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[m2, m3])/9 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/42 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/63 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/6 -
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/63 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/21 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/126 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/63 -
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/7 +
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/126 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m3])/63 +
+		(4*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/21 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/126 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/14 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/126 -
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/7 +
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/126 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/63 +
+		(2*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/21 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/63 -
+		(4*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m4]*CartesianPair[m2, m3])/63 +
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/21 -
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/126 -
+		(5*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/14 +
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/126 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/21 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/126 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/63 +
+		(4*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/7 -
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/63 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m5]*CartesianPair[m2, m3])/63 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 -
+		(4*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/14 +
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/6 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/21 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 -
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m4]*CartesianPair[m2, m3])/42 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/42 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 -
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/7 -
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/7 +
+		(5*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/6 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/42 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/42 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/42 +
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/21 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m5]*CartesianPair[m2, m3])/42 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m4])/42 +
+		(5*CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m2, m4])/42 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m2, m4])/14 +
+		(3*CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m2, m4])/14 -
+		(2*CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m2, m4])/21 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/28 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/28 -
+		(3*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/28 +
+		(19*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/126 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/21 -
+		(19*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[m2, m4])/126 -
+		(3*CartesianPair[i1, m5]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/14 +
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/14 +
+		(19*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/84 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/63 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/84 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[m2, m4])/63 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/4 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/4 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/21 -
+		(23*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/126 -
+		(23*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/84 +
+		(23*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[m2, m4])/126 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/42 -
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/252 -
+		(9*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/28 +
+		(23*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/252 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/42 -
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/252 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/126 +
+		(4*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/21 -
+		(8*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/63 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m5]*CartesianPair[i5, m1]*CartesianPair[m2, m4])/63 -
+		(9*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/28 +
+		(19*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/126 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/12 -
+		(19*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/126 +
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/6 -
+		(41*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/252 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/18 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/14 +
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/252 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m5]*CartesianPair[i5, m3]*CartesianPair[m2, m4])/126 -
+		(3*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/28 +
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/252 +
+		(9*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/14 -
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/252 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/21 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/63 -
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/63 -
+		(5*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/14 +
+		(73*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/252 -
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m5]*CartesianPair[m2, m4])/126 -
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/7 +
+		(19*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/42 -
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/7 +
+		(13*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/42 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 -
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/7 +
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/42 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/7 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 +
+		(3*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/14 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/42 -
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/21 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m3]*CartesianPair[m2, m4])/42 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/6 +
+		(3*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/7 +
+		(25*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/42 -
+		(4*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/7 -
+		(13*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(9*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 -
+		(5*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/42 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/21 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/7 -
+		(8*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/21 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/42 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/14 +
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m5]*CartesianPair[m2, m4])/6 +
+		(23*CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/126 -
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/126 -
+		(4*CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/63 -
+		(19*CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/126 -
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/63 +
+		(19*CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m2, m5])/126 -
+		(13*CartesianPair[i1, m4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/63 +
+		(13*CartesianPair[i1, m3]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/63 +
+		(7*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/36 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/7 -
+		(79*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/252 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m2, m5])/7 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/36 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/36 -
+		(79*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/252 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/42 -
+		(13*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/126 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[m2, m5])/42 +
+		(59*CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/252 -
+		(59*CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/252 -
+		(23*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/252 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/6 +
+		(79*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/126 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[m2, m5])/6 -
+		(3*CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/28 +
+		(17*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/63 +
+		(19*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/84 -
+		(17*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/63 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/6 -
+		(41*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/252 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/18 -
+		(5*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/42 +
+		(59*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/252 -
+		(31*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m2, m5])/126 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/21 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/36 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/84 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/36 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/42 -
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/252 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/126 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/7 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/126 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m3]*CartesianPair[m2, m5])/63 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/21 -
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/252 -
+		(23*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/84 +
+		(61*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/252 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/42 +
+		(31*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/252 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/126 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/7 -
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/126 +
+		(10*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m4]*CartesianPair[m2, m5])/63 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/42 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/7 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/3 -
+		(4*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/7 -
+		(8*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/21 +
+		(31*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/42 -
+		(2*CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/7 +
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/42 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/7 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/42 -
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/21 +
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/42 -
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/21 +
+		(3*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/14 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m3]*CartesianPair[m2, m5])/21 +
+		(13*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/42 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/7 -
+		(17*CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 +
+		(15*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(9*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 -
+		(9*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/7 +
+		(8*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 -
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/2 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/7 +
+		(31*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/42 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m4]*CartesianPair[m2, m5])/21 +
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 -
+		(2*CartesianPair[i1, m5]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m5]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/6 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 -
+		(CartesianPair[i1, m5]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/42 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/6 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m5]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/21 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/42 -
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m5]*CartesianPair[m1, m2]*CartesianPair[m3, m4])/42 +
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/21 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/21 +
+		(11*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 +
+		(3*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/7 -
+		(2*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/7 +
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/21 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/7 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/42 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/7 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m5]*CartesianPair[m3, m4])/21 -
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/21 +
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 -
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/21 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/6 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/21 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m5]*CartesianPair[m3, m4])/21 -
+		(23*CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/126 +
+		(4*CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/63 +
+		(23*CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/126 -
+		(4*CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/63 +
+		(31*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/126 -
+		(31*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m3, m5])/126 +
+		(61*CartesianPair[i1, m4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/252 -
+		(61*CartesianPair[i1, m2]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/252 -
+		(13*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/63 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/126 +
+		(CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/36 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i4, m1]*CartesianPair[m3, m5])/126 -
+		(61*CartesianPair[i1, m4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/252 +
+		(61*CartesianPair[i1, m1]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/252 +
+		(13*CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/63 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/126 -
+		(CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/36 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i4, m2]*CartesianPair[m3, m5])/126 -
+		(61*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/126 +
+		(61*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/126 +
+		(59*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/252 -
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/63 -
+		(59*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/252 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[m3, m5])/63 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/28 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m2]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/84 -
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/14 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m4]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/84 +
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/4 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m4]*CartesianPair[i5, m1]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/28 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, m1]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/84 +
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/14 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m4]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/84 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/4 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m4]*CartesianPair[i5, m2]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/4 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/42 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/4 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/42 +
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/4 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/14 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/14 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/4 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[i5, m4]*CartesianPair[m3, m5])/14 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, m4]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 +
+		(CartesianPair[i1, m4]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, m4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/6 +
+		(CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 -
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/21 -
+		(CartesianPair[i1, m4]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 -
+		(CartesianPair[i1, i3]*CartesianPair[i2, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/6 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m4]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/21 +
+		(11*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 -
+		(11*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/21 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m4]*CartesianPair[m1, m2]*CartesianPair[m3, m5])/21 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 +
+		(11*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, i4]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/42 +
+		(43*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/42 -
+		(25*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 -
+		(4*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/7 +
+		(15*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 -
+		(13*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 +
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/14 -
+		(8*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 -
+		(4*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/7 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/6 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/7 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m4]*CartesianPair[m3, m5])/21 +
+		(11*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 -
+		(25*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(43*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 +
+		(25*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 -
+		(17*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(31*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 -
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/7 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/3 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 -
+		(4*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(19*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/42 -
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m4]*CartesianPair[m3, m5])/21 +
+		(10*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 -
+		(16*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 -
+		(16*CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 -
+		(5*CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 -
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 +
+		(32*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m4, m5])/63 -
+		(23*CartesianPair[i1, m3]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/126 +
+		(23*CartesianPair[i1, m2]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/126 +
+		(23*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/126 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/63 -
+		(4*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/63 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[m4, m5])/63 +
+		(4*CartesianPair[i1, m3]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/63 -
+		(4*CartesianPair[i1, m1]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/63 -
+		(11*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/126 +
+		(4*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, m1]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/63 -
+		(19*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/126 -
+		(4*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[m4, m5])/63 +
+		(31*CartesianPair[i1, m2]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/126 -
+		(31*CartesianPair[i1, m1]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/126 -
+		(2*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/63 +
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/63 +
+		(19*CartesianPair[i1, m1]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/126 -
+		(2*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[m4, m5])/63 +
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, m2]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/14 +
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/42 -
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m3]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/14 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/42 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m2]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/7 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/7 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/21 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m3]*CartesianPair[i5, m1]*CartesianPair[m4, m5])/7 -
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/42 -
+		(3*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/14 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/42 +
+		(CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, m1]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/7 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/7 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m3]*CartesianPair[i5, m2]*CartesianPair[m4, m5])/42 +
+		(3*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/14 -
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, m1]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/14 -
+		(2*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/21 +
+		(3*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, m2]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/14 -
+		(CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/7 +
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/21 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, m1]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/7 +
+		(CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/7 -
+		(5*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, m2]*CartesianPair[i5, m3]*CartesianPair[m4, m5])/42 -
+		(5*CartesianPair[i1, m3]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/42 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m3]*CartesianPair[i3, i4]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/42 +
+		(CartesianPair[i1, m3]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/7 -
+		(8*CartesianPair[i1, i4]*CartesianPair[i2, m3]*CartesianPair[i3, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 +
+		(CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/2 +
+		(2*CartesianPair[i1, m3]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 +
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 -
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, m3]*CartesianPair[i4, i5]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/6 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/7 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/42 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/7 +
+		(5*CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m3]*CartesianPair[m1, m2]*CartesianPair[m4, m5])/21 +
+		(5*CartesianPair[i1, m2]*CartesianPair[i2, i5]*CartesianPair[i3, i4]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/42 -
+		(17*CartesianPair[i1, m2]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/21 +
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m2]*CartesianPair[i3, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/42 -
+		(17*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/21 +
+		(13*CartesianPair[i1, m2]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/21 -
+		(17*CartesianPair[i1, i3]*CartesianPair[i2, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/14 +
+		(13*CartesianPair[i1, i2]*CartesianPair[i3, m2]*CartesianPair[i4, i5]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/21 -
+		(CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/6 +
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/6 -
+		(CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/6 +
+		(23*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/42 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m2]*CartesianPair[m1, m3]*CartesianPair[m4, m5])/6 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, m1]*CartesianPair[i3, i4]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/42 +
+		(31*CartesianPair[i1, m1]*CartesianPair[i2, i4]*CartesianPair[i3, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/42 -
+		(13*CartesianPair[i1, i4]*CartesianPair[i2, m1]*CartesianPair[i3, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 -
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i4]*CartesianPair[i3, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/14 +
+		(8*CartesianPair[i1, i4]*CartesianPair[i2, i5]*CartesianPair[i3, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 -
+		(5*CartesianPair[i1, m1]*CartesianPair[i2, i3]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/6 +
+		(13*CartesianPair[i1, i3]*CartesianPair[i2, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 +
+		(2*CartesianPair[i1, i2]*CartesianPair[i3, m1]*CartesianPair[i4, i5]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 +
+		(5*CartesianPair[i1, i5]*CartesianPair[i2, i3]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/7 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i5]*CartesianPair[i4, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/42 +
+		(5*CartesianPair[i1, i4]*CartesianPair[i2, i3]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/21 -
+		(2*CartesianPair[i1, i3]*CartesianPair[i2, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/7 -
+		(CartesianPair[i1, i2]*CartesianPair[i3, i4]*CartesianPair[i5, m1]*CartesianPair[m2, m3]*CartesianPair[m4, m5])/42
 };
 
 

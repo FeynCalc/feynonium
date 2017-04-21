@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Basic FeynOnium objects										*)
@@ -27,33 +27,21 @@ bmtmp::usage="";
 
 DataType[FMStandardSpinorChain, FCTensor] = True;
 
-(*
-(*  eta^+ (...) xi corresponds to <0| chi^+ (...) psi *)
-NRQCDSpinSinglet /:
-	MakeBoxes[NRQCDSpinSinglet[Complex[0, 1]], TraditionalForm] :=
-		RowBox[{SuperscriptBox["\[Eta]", "\[Dagger]"], ".", "\[Xi]"}];
-
-(*  xi^+ (...) eta corresponds to psi^+ (...) xi |0> *)
-NRQCDSpinSinglet /:
-	MakeBoxes[NRQCDSpinSinglet[Complex[0, -1]], TraditionalForm] :=
-		RowBox[{SuperscriptBox["\[Xi]", "\[Dagger]"], ".", "\[Eta]"}];
-*)
-
 FMStandardSpinorChain["T", _Integer, _List, _List, 0, _]:=
 	0;
 
 FMStandardSpinorChain["T", _Integer, _List, _List, _, 0]:=
 	0;
 
-FMStandardSpinorChain["T", _Integer, _List, _List, TIndex[], TIndex[] ]:=
+FMStandardSpinorChain["T", _Integer, _List, _List, TemporalIndex[], TemporalIndex[] ]:=
 	0;
 
-FMStandardSpinorChain["T", _Integer, _List, _List, (a: _LorentzIndex | _CIndex | _Momentum | _CMomentum ),
-	(a: _LorentzIndex | _CIndex | _Momentum | _CMomentum )]:=
+FMStandardSpinorChain["T", _Integer, _List, _List, (a: _LorentzIndex | _CartesianIndex | _Momentum | _CartesianMomentum ),
+	(a: _LorentzIndex | _CartesianIndex | _Momentum | _CartesianMomentum )]:=
 	0;
 
-FMStandardSpinorChain["T", i_Integer, l1_List, l2_List, (a:_CIndex | _CMomentum), TIndex[]]:=
-	- FMStandardSpinorChain["T", i, l1, l2, TIndex[], a];
+FMStandardSpinorChain["T", i_Integer, l1_List, l2_List, (a:_CartesianIndex | _CartesianMomentum), TemporalIndex[]]:=
+	- FMStandardSpinorChain["T", i, l1, l2, TemporalIndex[], a];
 
 FMStandardSpinorChain /:
 	MakeBoxes[FMStandardSpinorChain[t_String, i_, {p1_, m1_}, {p2_, m2_}], TraditionalForm] :=

@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2016 Vladyslav Shtabovenko
+	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Applies Schoute identity									*)
@@ -39,13 +39,13 @@ FMCartesianSchouten[expr_, {i_, j_, k_, l_, m_}, OptionsPattern[]] :=
 		];
 
 		input =
-			Eps[CMomentum[i], CMomentum[j], CMomentum[k]] CPair[CMomentum[l], CMomentum[m]];
+			Eps[CartesianMomentum[i], CartesianMomentum[j], CartesianMomentum[k]] CartesianPair[CartesianMomentum[l], CartesianMomentum[m]];
 
 		If[	OptionValue[Expand],
-			ex = Expand2[expr, {Eps, CPair}]
+			ex = Expand2[expr, {Eps, CartesianPair}]
 		];
 
-		ex = ex /. Power[p_CPair,n_] :> p power[p,n-1];
+		ex = ex /. Power[p_CartesianPair,n_] :> p power[p,n-1];
 
 		If[	FreeQ[ex, input],
 			Message[FMCartesianSchouten::notpresent,ToString[input,InputForm]]
@@ -55,16 +55,16 @@ FMCartesianSchouten[expr_, {i_, j_, k_, l_, m_}, OptionsPattern[]] :=
 
 		res =
 			ex /. {input :>
-				(head[1,Eps[CMomentum[j], CMomentum[k], CMomentum[l]] CPair[
-				CMomentum[i], CMomentum[m]]] -
-				head[2,Eps[CMomentum[k], CMomentum[l], CMomentum[i]] CPair[
-				CMomentum[j], CMomentum[m]]] +
-				head[3,Eps[CMomentum[l], CMomentum[i], CMomentum[j]] CPair[
-				CMomentum[k], CMomentum[m]]]/. Pattern -> pat /. pat[a_,___]:>a)};
+				(head[1,Eps[CartesianMomentum[j], CartesianMomentum[k], CartesianMomentum[l]] CartesianPair[
+				CartesianMomentum[i], CartesianMomentum[m]]] -
+				head[2,Eps[CartesianMomentum[k], CartesianMomentum[l], CartesianMomentum[i]] CartesianPair[
+				CartesianMomentum[j], CartesianMomentum[m]]] +
+				head[3,Eps[CartesianMomentum[l], CartesianMomentum[i], CartesianMomentum[j]] CartesianPair[
+				CartesianMomentum[k], CartesianMomentum[m]]]/. Pattern -> pat /. pat[a_,___]:>a)};
 
 		If[ Length[Cases2[res/.head[_,0]:>0,head]]===1,
 			Print["Warning! The replacement of ",
-			Eps[CMomentum[i], CMomentum[j], CMomentum[k]] CPair[CMomentum[l], CMomentum[m]], " failed!" ]
+			Eps[CartesianMomentum[i], CartesianMomentum[j], CartesianMomentum[k]] CartesianPair[CartesianMomentum[l], CartesianMomentum[m]], " failed!" ]
 		];
 
 		res = res /. power -> Power;
@@ -79,7 +79,7 @@ FMCartesianSchouten[expr_, {i_, j_, k_, l_, m_}, OptionsPattern[]] :=
 		];
 
 		If[	OptionValue[Collect],
-			res = Collect2[res, {Eps, CPair}]
+			res = Collect2[res, {Eps, CartesianPair}]
 		];
 
 		res
