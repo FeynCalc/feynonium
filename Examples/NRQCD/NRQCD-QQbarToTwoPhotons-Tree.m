@@ -40,8 +40,8 @@ $FAVerbose=0;
 (*Generate Feynman diagrams*)
 
 
-diags=InsertFields[CreateTopologies[0,2->2],{F[3,{2,col1}],
-	-F[3,{2,col2}]}->{V[1],V[1]},InsertionLevel->{Classes}];
+diags=InsertFields[CreateTopologies[0,2->2],{F[3,{2,SUNFIndex[col1]}],
+	-F[3,{2,SUNFIndex[col2]}]}->{V[1],V[1]},InsertionLevel->{Classes}];
 Paint[diags,ColumnsXRows->{2,1},Numbering->None,SheetHeader->False,
 ImageSize->{512,256}];
 

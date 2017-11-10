@@ -42,7 +42,7 @@ EndPackage[]
 
 
 (* Print startup message *)
-If[ Global`$FeynCalcStartupMessages =!= False,
+If[ $FeynCalcStartupMessages =!= False,
 	Print[Style["FeynOnium ", "Text", Bold], Style[$FeynOniumVersion <> " loaded.", "Text"]];
 	Print[ Style["Have a look at the supplied ","Text"],
 

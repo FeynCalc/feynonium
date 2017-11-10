@@ -106,7 +106,7 @@ CartesianMomentum[p4]=0;
 
 
 AbsoluteTiming[amp1=TID[amp,l,UsePaVeBasis->True,ToPaVe->True,
-Isolate->False]//DiracSimplify//DiracSimplify;]//First
+Isolate->False]//DiracSimplify;]//First
 
 
 (* ::Text:: *)
@@ -141,7 +141,7 @@ FMSpinorChainExplicit2[#,FMSpinorNormalization->"nonrelativistic"]&//
 AbsoluteTiming[amp3=amp2//Collect2[#,{PaVe,D0}]&//
 ReplaceAll[#,(x:_PaVe|_D0):>PaXEvaluateUVIRSplit[x,
 PaXAnalytic->True,PaXImplicitPrefactor->1/( 2Pi)^D]]&//
-FCHideEpsilon;]//First
+FCHideEpsilon//ExpandScalarProduct;]//First
 
 
 (* ::Text:: *)
