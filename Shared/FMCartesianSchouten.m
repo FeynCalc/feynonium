@@ -7,7 +7,7 @@
 	Copyright (C) 2015-2017 Vladyslav Shtabovenko
 *)
 
-(* :Summary:	Applies Schoute identity									*)
+(* :Summary:	Applies Schouten's identity									*)
 
 (* ------------------------------------------------------------------------ *)
 
