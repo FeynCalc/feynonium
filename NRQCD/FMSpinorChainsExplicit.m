@@ -110,25 +110,25 @@ FMSpinorChainsExplicit[expr_, {p1final_, m1_}, {p2final_, m2_}, OptionsPattern[]
 		ruleTwoBodyRestFrameKinematics = {
 			CartesianMomentum[p1] -> CartesianMomentum[FCGV["Jacobi QR"]],
 			CartesianMomentum[p2] -> -CartesianMomentum[FCGV["Jacobi QR"]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p1]] -> Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p2]] -> Sqrt[m2^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]]
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1]] -> Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2]] -> Sqrt[m2^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]]
 		};
 
 		ruleThreeBodyRestFrameKinematics = {
 			CartesianMomentum[p1] -> CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],
 			CartesianMomentum[p2] -> -CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p1]] -> Sqrt[m1^2 +
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1]] -> Sqrt[m1^2 +
 				CartesianPair[CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]]]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p2]] -> Sqrt[m2^2 +
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2]] -> Sqrt[m2^2 +
 				CartesianPair[CartesianMomentum[FCGV["Jacobi Q1R"]]+CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q1R"]]+CartesianMomentum[FCGV["Jacobi Q2R"]]]]
 		};
 
 		ruleTwoBodyLabFrameKinematics = {
 			CartesianMomentum[p1R] -> CartesianMomentum[FCGV["Jacobi QR"]],
 			CartesianMomentum[p2R] -> -CartesianMomentum[FCGV["Jacobi QR"]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p1R]] -> Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p2R]] -> Sqrt[m2^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[PR]] -> (	Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]]+
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1R]] -> Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2R]] -> Sqrt[m2^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]],
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[PR]] -> (	Sqrt[m1^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]]+
 												Sqrt[m2^2 + CartesianPair[CartesianMomentum[FCGV["Jacobi QR"]],CartesianMomentum[FCGV["Jacobi QR"]]]]),
 			CartesianMomentum[P] -> CartesianMomentum[FCGV["Jacobi P"]]
 		};
@@ -136,12 +136,12 @@ FMSpinorChainsExplicit[expr_, {p1final_, m1_}, {p2final_, m2_}, OptionsPattern[]
 		ruleThreeBodyLabFrameKinematics = {
 			CartesianMomentum[p1R] -> CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],
 			CartesianMomentum[p2R] -> -CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p1R]] -> Sqrt[m1^2 +
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1R]] -> Sqrt[m1^2 +
 				CartesianPair[CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]]]],
-			TemporalPair[TemporalIndex[],TemporalMomentum[p2R]] -> Sqrt[m2^2 +
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2R]] -> Sqrt[m2^2 +
 				CartesianPair[CartesianMomentum[FCGV["Jacobi Q1R"]]+CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q1R"]]+CartesianMomentum[FCGV["Jacobi Q2R"]]]],
 
-			TemporalPair[TemporalIndex[],TemporalMomentum[PR]] -> ( Sqrt[4 CartesianPair[CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q2R"]]] + FCGV["m3"]^2] +
+			TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[PR]] -> ( Sqrt[4 CartesianPair[CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q2R"]]] + FCGV["m3"]^2] +
 
 				Sqrt[m1^2 +
 				CartesianPair[CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]],CartesianMomentum[FCGV["Jacobi Q1R"]]-CartesianMomentum[FCGV["Jacobi Q2R"]]]] +
@@ -283,16 +283,16 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 
 		(*	Production vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["V",1,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["V",1,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Production vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["V",1,{p1,m1},{p2,m2}]]] :>
 			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[x].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Production axial-vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["A",1,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[5].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["A",1,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[5].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Production axial-vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["A",1,{p1,m1},{p2,m2}]]] :>
@@ -300,8 +300,8 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 
 		(*	Production tensor chain , temporal-spatial component	*)
-		FMStandardSpinorChain["T",1,{p1,m1},{p2,m2},TemporalIndex[], (x: _CartesianIndex | _CartesianMomentum)] :>
-			head[norm I ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[x].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		FMStandardSpinorChain["T",1,{p1,m1},{p2,m2},ExplicitLorentzIndex[0], (x: _CartesianIndex | _CartesianMomentum)] :>
+			head[norm I ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[x].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Production tensor chain , spatial-spatial component	*)
 		FMStandardSpinorChain["T",1,{p1,m1},{p2,m2},(x: _CartesianIndex | _CartesianMomentum), (y: _CartesianIndex | _CartesianMomentum)] :>
@@ -327,16 +327,16 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Decay vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["V",2,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["V",2,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Decay vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["V",2,{p1,m1},{p2,m2}]]] :>
 			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Decay axial-vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["A",2,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["A",2,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Decay axial-vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["A",2,{p1,m1},{p2,m2}]]] :>
@@ -344,8 +344,8 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 
 		(*	Decay tensor chain , temporal-spatial component	*)
-		FMStandardSpinorChain["T",2,{p1,m1},{p2,m2},TemporalIndex[], (x: _CartesianIndex | _CartesianMomentum)] :>
-			head[norm I ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		FMStandardSpinorChain["T",2,{p1,m1},{p2,m2},ExplicitLorentzIndex[0], (x: _CartesianIndex | _CartesianMomentum)] :>
+			head[norm I ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 
 		(*	Decay tensor chain , spatial-spatial component	*)
@@ -372,16 +372,16 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Fermion-fermion vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["V",3,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["V",3,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Fermion-fermion vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["V",3,{p1,m1},{p2,m2}]]] :>
 			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Fermion-fermion axial-vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["A",3,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["A",3,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[5].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Fermion-fermion axial-vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["A",3,{p1,m1},{p2,m2}]]] :>
@@ -389,8 +389,8 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 
 		(*	Fermion-fermion tensor chain , temporal-spatial component	*)
-		FMStandardSpinorChain["T",3,{p1,m1},{p2,m2},TemporalIndex[], (x: _CartesianIndex | _CartesianMomentum)] :>
-			head[norm I ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		FMStandardSpinorChain["T",3,{p1,m1},{p2,m2},ExplicitLorentzIndex[0], (x: _CartesianIndex | _CartesianMomentum)] :>
+			head[norm I ( FMSpinorChainExplicit2[Spinor[Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[x].Spinor[Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 
 		(*	Fermion-fermion tensor chain , spatial-spatial component	*)
@@ -418,16 +418,16 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[5].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Antifermion-antifermion vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["V",4,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["V",4,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Antifermion-antifermion vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["V",4,{p1,m1},{p2,m2}]]] :>
 			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[x].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Antifermion-antifermion axial-vector chain , temporal component	*)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain["A",4,{p1,m1},{p2,m2}]]] :>
-			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[TemporalIndex[]].DiracGamma[5].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain["A",4,{p1,m1},{p2,m2}]]] :>
+			head[norm ( FMSpinorChainExplicit2[Spinor[-Momentum[p1], m1, 1].DiracGamma[ExplicitLorentzIndex[0]].DiracGamma[5].Spinor[-Momentum[p2], m2, 1], FMSpinorNormalization -> "omitted", FCI->True])],
 
 		(*	Antifermion-antifermion axial-vector chain , spatial component	*)
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain["A",4,{p1,m1},{p2,m2}]]] :>
@@ -435,7 +435,7 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 
 
 		(*	Antifermion-antifermion tensor chain , temporal-spatial component	*)
-		FMStandardSpinorChain["T",4,{p1,m1},{p2,m2},TemporalIndex[], (x: _CartesianIndex | _CartesianMomentum)] :>
+		FMStandardSpinorChain["T",4,{p1,m1},{p2,m2},ExplicitLorentzIndex[0], (x: _CartesianIndex | _CartesianMomentum)] :>
 			(
 			tmpci = CartesianIndex[$MU[Unique[]]];
 			head[I norm (
@@ -465,8 +465,8 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 			)
 		};
 
-		res = res/. norm -> n1 n2 /. {p10 -> TemporalPair[TemporalIndex[],TemporalMomentum[p1]],
-			p20 -> TemporalPair[TemporalIndex[],TemporalMomentum[p2]], p1p2 -> CartesianPair[CartesianMomentum[p1],CartesianMomentum[p2]]};
+		res = res/. norm -> n1 n2 /. {p10 -> TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1]],
+			p20 -> TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2]], p1p2 -> CartesianPair[CartesianMomentum[p1],CartesianMomentum[p2]]};
 
 		res
 	];
@@ -476,10 +476,10 @@ createRestFramChainRules[p1_,p2_,m1_, m2_,  head_]:=
 createBoostedChainRules[p1_,p2_, m1_, m2_, head_, P_, p1R_, p2R_, PR_]:=
 	Block[{PR0, p1R0, p2R0, PVecSq},
 
-		PR0 = TemporalPair[TemporalIndex[],TemporalMomentum[PR]];
+		PR0 = TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[PR]];
 
-		p1R0 = TemporalPair[TemporalIndex[],TemporalMomentum[p1R]];
-		p2R0 = TemporalPair[TemporalIndex[],TemporalMomentum[p2R]];
+		p1R0 = TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p1R]];
+		p2R0 = TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p2R]];
 		PVecSq = CartesianPair[CartesianMomentum[P],CartesianMomentum[P]];
 
 	{
@@ -493,10 +493,10 @@ createBoostedChainRules[p1_,p2_, m1_, m2_, head_, P_, p1R_, p2R_, PR_]:=
 		(*	Boosted vector or axial vector chain , temporal component	*)
 		(* 	L^0_0 s1_R g^0 (g^5) s2_R + L^0_i s1_R g^i (g^5) s2_R, with
 				L^0_0 = P0/PR0 L^0_i = P^i/PR0 *)
-		TemporalPair[TemporalIndex[],TemporalMomentum[FMStandardSpinorChain[st:"V"|"A",ii_,{p1,m1},{p2,m2}]]] ->
+		TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[FMStandardSpinorChain[st:"V"|"A",ii_,{p1,m1},{p2,m2}]]] ->
 			head[(
 				(*1st term*)
-				Sqrt[1+PVecSq/PR0^2] TemporalPair[TemporalIndex[],TemporalMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]] +
+				Sqrt[1+PVecSq/PR0^2] TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]] +
 				(*2nd term*)
 				(1/PR0)CartesianPair[CartesianMomentum[P],CartesianMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]]
 
@@ -509,7 +509,7 @@ createBoostedChainRules[p1_,p2_, m1_, m2_, head_, P_, p1R_, p2R_, PR_]:=
 		CartesianPair[(x: _CartesianIndex | _CartesianMomentum),CartesianMomentum[FMStandardSpinorChain[st:"V"|"A",ii_,{p1,m1},{p2,m2}]]] ->
 			head[(
 				(*1st term*)
-					(CartesianPair[CartesianMomentum[P],x]/PR0) TemporalPair[TemporalIndex[],TemporalMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]] +
+					(CartesianPair[CartesianMomentum[P],x]/PR0) TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]] +
 				(*2nd term*)
 					CartesianPair[x,CartesianMomentum[holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}]]] +
 				(*3rd term*)
@@ -518,14 +518,14 @@ createBoostedChainRules[p1_,p2_, m1_, m2_, head_, P_, p1R_, p2R_, PR_]:=
 
 
 		(*	Boosted tensors chain , temporal-spatial component	*)
-		FMStandardSpinorChain[st:"T",ii_,{p1,m1},{p2,m2}, TemporalIndex[], (x: _CartesianIndex | _CartesianMomentum)] ->
+		FMStandardSpinorChain[st:"T",ii_,{p1,m1},{p2,m2}, ExplicitLorentzIndex[0], (x: _CartesianIndex | _CartesianMomentum)] ->
 			head[(
 				(*1st term*)
-				Sqrt[1+PVecSq/PR0^2] holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},TemporalIndex[], x] +
+				Sqrt[1+PVecSq/PR0^2] holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},ExplicitLorentzIndex[0], x] +
 				(*2nd term*)
 				1/(PR0) holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},CartesianMomentum[P], x] +
 				(*3rd term*)
-				(1-Sqrt[1+PVecSq/PR0^2])/PVecSq CartesianPair[x,CartesianMomentum[P]] holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},TemporalIndex[], CartesianMomentum[P]]
+				(1-Sqrt[1+PVecSq/PR0^2])/PVecSq CartesianPair[x,CartesianMomentum[P]] holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},ExplicitLorentzIndex[0], CartesianMomentum[P]]
 			)],
 
 		(*	Boosted tensors chain , spatial-spatial component	*)
@@ -534,9 +534,9 @@ createBoostedChainRules[p1_,p2_, m1_, m2_, head_, P_, p1R_, p2R_, PR_]:=
 				(*1st term*)
 				holdSpinorChains[st,ii,{p1R,m1},{p2R,m2}, x, y] +
 				(*2nd term*)
-				CartesianPair[CartesianMomentum[P],x]/(PR0) holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},TemporalIndex[], y] -
+				CartesianPair[CartesianMomentum[P],x]/(PR0) holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},ExplicitLorentzIndex[0], y] -
 				(*3rd term*)
-				CartesianPair[CartesianMomentum[P],y]/(PR0) holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},TemporalIndex[], x] +
+				CartesianPair[CartesianMomentum[P],y]/(PR0) holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},ExplicitLorentzIndex[0], x] +
 				(*4th term*)
 				CartesianPair[CartesianMomentum[P],x] (Sqrt[1+PVecSq/PR0^2]-1)/PVecSq holdSpinorChains[st,ii,{p1R,m1},{p2R,m2},CartesianMomentum[P],y] -
 				(*5th term*)

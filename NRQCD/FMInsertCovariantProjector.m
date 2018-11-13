@@ -132,7 +132,7 @@ covariantProjector[expr_, {p1_, m_}, {p2_, m_}, diracGammaIndex_, colors_List] :
 		];
 
 		P = p1 + p2;
-		En = (TemporalPair[TemporalIndex[], TemporalMomentum[p1]] + TemporalPair[TemporalIndex[], TemporalMomentum[p2]]) /2;
+		En = (TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]) /2;
 
 		ruleProjectors = {
 			(* decay, vbar (p2) ... u (p1) *)

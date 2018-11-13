@@ -33,15 +33,15 @@ FMStandardSpinorChain["T", _Integer, _List, _List, 0, _]:=
 FMStandardSpinorChain["T", _Integer, _List, _List, _, 0]:=
 	0;
 
-FMStandardSpinorChain["T", _Integer, _List, _List, TemporalIndex[], TemporalIndex[] ]:=
+FMStandardSpinorChain["T", _Integer, _List, _List, ExplicitLorentzIndex[0], ExplicitLorentzIndex[0] ]:=
 	0;
 
 FMStandardSpinorChain["T", _Integer, _List, _List, (a: _LorentzIndex | _CartesianIndex | _Momentum | _CartesianMomentum ),
 	(a: _LorentzIndex | _CartesianIndex | _Momentum | _CartesianMomentum )]:=
 	0;
 
-FMStandardSpinorChain["T", i_Integer, l1_List, l2_List, (a:_CartesianIndex | _CartesianMomentum), TemporalIndex[]]:=
-	- FMStandardSpinorChain["T", i, l1, l2, TemporalIndex[], a];
+FMStandardSpinorChain["T", i_Integer, l1_List, l2_List, (a:_CartesianIndex | _CartesianMomentum), ExplicitLorentzIndex[0]]:=
+	- FMStandardSpinorChain["T", i, l1, l2, ExplicitLorentzIndex[0], a];
 
 FMStandardSpinorChain /:
 	MakeBoxes[FMStandardSpinorChain[t_String, i_, {p1_, m1_}, {p2_, m2_}], TraditionalForm] :=

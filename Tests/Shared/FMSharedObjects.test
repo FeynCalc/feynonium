@@ -12,7 +12,7 @@
 Tests`Shared`FMSharedObjectsFMStandardSpinorChain =
 ({
 {"FMSharedObjectsFMStandardSpinorChain-ID1",
-"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, TemporalIndex[], TemporalIndex[]]",
+"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, ExplicitLorentzIndex[0], ExplicitLorentzIndex[0]]",
 "0"},
 {"FMSharedObjectsFMStandardSpinorChain-ID2",
 "FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianIndex[i],
@@ -21,11 +21,11 @@ CartesianIndex[i]]","0"},
 "FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianMomentum[p],
 CartesianMomentum[p]]","0"},
 {"FMSharedObjectsFMStandardSpinorChains-ID4",
-"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianMomentum[p],TemporalIndex[]]",
-"-FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, TemporalIndex[],CartesianMomentum[p]]"},
+"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianMomentum[p],ExplicitLorentzIndex[0]]",
+"-FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, ExplicitLorentzIndex[0],CartesianMomentum[p]]"},
 {"FMSharedObjectsFMStandardSpinorChain-ID5",
-"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianIndex[i],TemporalIndex[]]",
-"-FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, TemporalIndex[],CartesianIndex[i]]"}
+"FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, CartesianIndex[i],ExplicitLorentzIndex[0]]",
+"-FMStandardSpinorChain[\"T\", 1, {p1, m1}, {p2, m2}, ExplicitLorentzIndex[0],CartesianIndex[i]]"}
 });
 
 

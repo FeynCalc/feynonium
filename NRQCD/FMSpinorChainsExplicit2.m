@@ -86,9 +86,9 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 		Switch[
 			OptionValue[FMSpinorNormalization],
 			"nonrelativistic",
-				normRule  = {(n1|n2)[p_,m_] :> Sqrt[(TemporalPair[TemporalIndex[],TemporalMomentum[p]]+ m)/(2 TemporalPair[TemporalIndex[],TemporalMomentum[p]])] },
+				normRule  = {(n1|n2)[p_,m_] :> Sqrt[(TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p]]+ m)/(2 TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p]])] },
 			"relativistic",
-				normRule  = {(n1|n2)[p_,m_] :> Sqrt[(TemporalPair[TemporalIndex[],TemporalMomentum[p]]+ m)] },
+				normRule  = {(n1|n2)[p_,m_] :> Sqrt[(TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p]]+ m)] },
 			"unspecified",
 				normRule  = {n1[p_,m_] :> FCGV["N1"][p,m], n2[p_,m_] :> FCGV["N2"][p,m]  },
 			"omitted",
@@ -138,21 +138,21 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 
 spinorRules = {
 	(* ubar *)
-	dotHold[Spinor[Momentum[p_, dim_:4], m_, 1],z___]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[{PauliXi[-I], -(PauliXi[-I].PauliSigma[CartesianMomentum[p,dim-1],dim-1]/(m + TemporalPair[TemporalIndex[], TemporalMomentum[p]]))},z],
+	dotHold[Spinor[Momentum[p_, dim_:4], m_, 1],z___]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[{PauliXi[-I], -(PauliXi[-I].PauliSigma[CartesianMomentum[p,dim-1],dim-1]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]]))},z],
 	(* vbar *)
-	dotHold[Spinor[-Momentum[p_, dim_:4], m_, 1],z___]/;!MatchQ[dim,_Symbol-4]:> n2[p,m] dotHold[{PauliEta[-I].PauliSigma[CartesianMomentum[p,dim-1],dim-1]/(m + TemporalPair[TemporalIndex[], TemporalMomentum[p]]), -PauliEta[-I]},z],
+	dotHold[Spinor[-Momentum[p_, dim_:4], m_, 1],z___]/;!MatchQ[dim,_Symbol-4]:> n2[p,m] dotHold[{PauliEta[-I].PauliSigma[CartesianMomentum[p,dim-1],dim-1]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]]), -PauliEta[-I]},z],
 	(* u *)
-	dotHold[z___,Spinor[Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliXi[I]}, {PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliXi[I]/(m + TemporalPair[TemporalIndex[], TemporalMomentum[p]])}}],
+	dotHold[z___,Spinor[Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliXi[I]}, {PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliXi[I]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]])}}],
 	(* v *)
-	dotHold[z___,Spinor[-Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliEta[I]/(m + TemporalPair[TemporalIndex[], TemporalMomentum[p]])}, {PauliEta[I]}}]
+	dotHold[z___,Spinor[-Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliEta[I]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]])}, {PauliEta[I]}}]
 };
 
 
 diracGammaRules = {
-	dotHold[z1___, coeff_. DiracGamma[x:(  _Momentum| _CartesianMomentum| _LorentzIndex| _CartesianIndex | _TemporalIndex),dim_:4] + cc_:0, z2___]/;NonCommFreeQ[{cc,coeff}]:>
+	dotHold[z1___, coeff_. DiracGamma[x:(  _Momentum| _CartesianMomentum| _LorentzIndex| _CartesianIndex | _ExplicitLorentzIndex),dim_:4] + cc_:0, z2___]/;NonCommFreeQ[{cc,coeff}]:>
 	( ind = CartesianIndex[$MU[Unique[]],cDimSelect[dim]];
-		dotHold[z1,{ {coeff FeynCalc`Package`MetricT Pair[x,TemporalIndex[]]+cc,  coeff FeynCalc`Package`MetricS Pair[x,ind] PauliSigma[ind,cDimSelect[dim]]},
-					{-coeff FeynCalc`Package`MetricS Pair[x,ind] PauliSigma[ind,cDimSelect[dim]], -coeff  FeynCalc`Package`MetricT Pair[x,TemporalIndex[]]+cc}},z2]
+		dotHold[z1,{ {coeff FeynCalc`Package`MetricT Pair[x,ExplicitLorentzIndex[0]]+cc,  coeff FeynCalc`Package`MetricS Pair[x,ind] PauliSigma[ind,cDimSelect[dim]]},
+					{-coeff FeynCalc`Package`MetricS Pair[x,ind] PauliSigma[ind,cDimSelect[dim]], -coeff  FeynCalc`Package`MetricT Pair[x,ExplicitLorentzIndex[0]]+cc}},z2]
 	),
 	dotHold[z1___, coeff_. DiracGamma[5] + cc_:0, z2___]/;NonCommFreeQ[{coeff,cc}]:>
 		dotHold[z1,{ {0, 1}, {1, 0}},z2]
