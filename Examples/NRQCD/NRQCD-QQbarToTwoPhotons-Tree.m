@@ -107,7 +107,7 @@ chains and decompose all 4 - vectors into temporal components and
 
 AbsoluteTiming[amps2=amps//DiracSimplify//FMSpinorChainExplicit2[#,
 	FMSpinorNormalization->"nonrelativistic"]&//Contract//
-	PropagatorDenominatorExplicit//LorentzToCartesian;]//First
+	FeynAmpDenominatorExplicit//LorentzToCartesian;]//First
 
 
 (* ::Text:: *)

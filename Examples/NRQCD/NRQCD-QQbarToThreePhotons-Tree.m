@@ -115,7 +115,7 @@ k2abs=Eq x2;
 
 AbsoluteTiming[amps2=amps//DiracSimplify//
 FMSpinorChainExplicit2[#,FMSpinorNormalization->"nonrelativistic"]&//
-Contract//PropagatorDenominatorExplicit//LorentzToCartesian;]//First
+Contract//FeynAmpDenominatorExplicit//LorentzToCartesian;]//First
 
 
 (* ::Text:: *)

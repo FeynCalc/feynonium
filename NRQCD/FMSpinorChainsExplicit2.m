@@ -29,6 +29,7 @@ dotHold::usage="";
 n1::usage="";
 n2::usage="";
 ind::usage="";
+sce2Verbose::usage="";
 
 Options[FMSpinorChainExplicit2] = {
 	Contract -> True,
@@ -36,6 +37,7 @@ Options[FMSpinorChainExplicit2] = {
 	DotSimplify -> True,
 	EpsEvaluate -> True,
 	FCI -> False,
+	FCVerbose -> False,
 	FMSpinorNormalization -> "relativistic",
 	PauliTrick -> True,
 	PowerExpand ->True,
@@ -47,7 +49,15 @@ FMSpinorChainExplicit2[expr_List, opts:OptionsPattern[]] :=
 
 FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 	Block[{ex, heads, tmp, res, null1,null2, repRule,
-		diracObjects, diracObjectsEval, normRule,times},
+		diracObjects, diracObjectsEval, normRule,times,time},
+
+
+		If [OptionValue[FCVerbose]===False,
+			sce2Verbose=$VeryVerbose,
+			If[MatchQ[OptionValue[FCVerbose], _Integer?Positive | 0],
+				sce2Verbose=OptionValue[FCVerbose]
+			];
+		];
 
 
 		If[ !OptionValue[FCI],
@@ -106,27 +116,45 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 		res = ex/.repRule /. times -> Times;
 
 		If[ OptionValue[DotSimplify],
-			res = res /.dsHead[x_] :> dsHead[DotSimplify[x,FCI->True]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying DotSimplify.", FCDoControl->sce2Verbose];
+			res = res /.dsHead[x_] :> dsHead[DotSimplify[x,FCI->True]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying DotSimplify, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		If[ OptionValue[PauliTrick],
-			res = res /.dsHead[x_] :> dsHead[PauliTrick[x,FCI->True]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying PauliTrick.", FCDoControl->sce2Verbose];
+			res = res /.dsHead[x_] :> dsHead[PauliTrick[x,FCI->True]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying PauliTrick, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		If[ OptionValue[Contract],
-			res = res /.dsHead[x_] :> dsHead[Contract[x,FCI->True]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying Contract.", FCDoControl->sce2Verbose];
+			res = res /.dsHead[x_] :> dsHead[Contract[x,FCI->True]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying Contract, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		If[ OptionValue[EpsEvaluate],
-			res = res /.dsHead[x_] :> dsHead[EpsEvaluate[x,FCI->True]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying EpsEvaluate.", FCDoControl->sce2Verbose];
+			res = res /.dsHead[x_] :> dsHead[EpsEvaluate[x,FCI->True]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying EpsEvaluate, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		If[	OptionValue[PowerExpand],
-			res = res/. dsHead[x_]:> dsHead[Expand[PowerExpand[x]]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying PowerExpand.", FCDoControl->sce2Verbose];
+			res = res/. dsHead[x_]:> dsHead[Expand[PowerExpand[x]]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying PowerExpand, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		If[	OptionValue[Collect],
-			res = res/. dsHead[x_]:> dsHead[Collect2[x,{PauliXi,PauliEta}]]
+			time = AbsoluteTime[];
+			FCPrint[1, "FMSpinorChainsExplicit2: Applying Collect.", FCDoControl->sce2Verbose];
+			res = res/. dsHead[x_]:> dsHead[Collect2[x,{PauliXi,PauliEta}]];
+			FCPrint[1, "FMSpinorChainsExplicit2: Done applying Collect, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
 		res = res /. dsHead->Identity;
@@ -144,7 +172,7 @@ spinorRules = {
 	(* u *)
 	dotHold[z___,Spinor[Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliXi[I]}, {PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliXi[I]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]])}}],
 	(* v *)
-	dotHold[z___,Spinor[-Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n1[p,m] dotHold[z,{{PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliEta[I]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]])}, {PauliEta[I]}}]
+	dotHold[z___,Spinor[-Momentum[p_, dim_:4], m_, 1]]/;!MatchQ[dim,_Symbol-4]:> n2[p,m] dotHold[z,{{PauliSigma[CartesianMomentum[p,dim-1],dim-1].PauliEta[I]/(m + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]])}, {PauliEta[I]}}]
 };
 
 
