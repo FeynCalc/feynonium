@@ -94,7 +94,7 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 			Abort[];
 		];
 
-		projListEval = projList /. CartesianPair -> CartesianPairContract /. CartesianPairContract -> CartesianPair //. projHead[CartesianPair[a__CartesianMomentum] b_.] :> CartesianPair[a] projHead[b] /.
+		projListEval = projList /. CartesianPair -> CartesianPairContract /. CartesianPairContract -> CartesianPair //. projHead[CartesianPair[a__CartesianMomentum]^n_. b_.] :> CartesianPair[a]^n projHead[b] /.
 		projHead[]|projHead[1]->1;
 
 		FCPrint[1, "FMCartesianTensorDecomposition: projListEval: ", projListEval, FCDoControl->ctdVerbose];

@@ -237,7 +237,7 @@ FMSpinorChainsExplicit[expr_, {p1final_, m1_}, {p2final_, m2_}, OptionsPattern[]
 		];
 
 		If[	OptionValue[DotSimplify],
-			res = res/. head[x_]:> head[DotSimplify[x,FCI->False]]
+			res = res/. head[x_]:> head[DotSimplify[x,FCI->True]]
 		];
 
 		If[	OptionValue[Collect],

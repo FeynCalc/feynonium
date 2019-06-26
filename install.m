@@ -65,8 +65,9 @@ InstallFeynOnium[OptionsPattern[]]:=
 	If[OptionValue[InstallFeynOniumDevelopmentVersion],
 		gitzip = OptionValue[FeynOniumDevelopmentVersionLink];
 		zipDir = "feynonium-master",
+		(* For now there is no stable version *)
 		gitzip = OptionValue[FeynOniumStableVersionLink];
-		zipDir = "feynonium-stable"
+		zipDir = "feynonium-master"
 	];
 
 	packageName = "FeynOnium";

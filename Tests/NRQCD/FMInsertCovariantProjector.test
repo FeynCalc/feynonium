@@ -512,7 +512,7 @@ TemporalMomentum[p2]])))"}
 Tests`NRQCD`fcstFMInsertCovariantProjectorTraces =
 ({
 {"fcstFMInsertCovariantProjectorTraces-ID1",
-"$BreitMaison=True; FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
+"FCSetDiracGammaScheme[\"BMHV\"]; FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
 ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,\
@@ -690,13 +690,13 @@ Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 "res=FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,\
 m},{p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
 relativistic\",Dimension\[Rule]4]/.DiracTrace\[Rule]Tr; \
-FCClearScalarProducts[]; $BreitMaison=False; res",
+FCClearScalarProducts[]; FCSetDiracGammaScheme[\"NDR\"]; \n res",
 "(-2*(-(m*Pair[LorentzIndex[Lor1], Momentum[p1]]) + \
 2*EN*Pair[LorentzIndex[Lor1], Momentum[p2]] - \
 m*Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNTF[{acol}, col1, \
 col2])/EN"},
 {"fcstFMInsertCovariantProjectorTraces-ID33",
-"$BreitMaison=True; FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
+"FCSetDiracGammaScheme[\"BMHV\"]; \n FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
 ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,\
@@ -743,7 +743,7 @@ SUNFIndex[col2]])/(Sqrt[2]*EN*Sqrt[SUNN])"},
 m},{p2,m},Lor1,{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]\
 True,FMSpinorNormalization\[Rule]\"relativistic\",
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr; FCClearScalarProducts[]; \
-$BreitMaison=False; res",
+FCSetDiracGammaScheme[\"NDR\"]; \n res",
 "(Sqrt[2]*(Pair[LorentzIndex[Lor1], Momentum[p1]] - \
 Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNFDelta[SUNFIndex[col1], \
 SUNFIndex[col2]])/Sqrt[SUNN]"}
@@ -752,7 +752,7 @@ SUNFIndex[col2]])/Sqrt[SUNN]"}
 Tests`NRQCD`fcstFMInsertCovariantProjectorNormalization =
 ({
 {"fcstFMInsertCovariantProjectorNormalization-ID1",
-"$BreitMaison=True; FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
+"FCSetDiracGammaScheme[\"BMHV\"]; \n FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
 ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](ChangeDimension[\
@@ -815,10 +815,10 @@ SpinorV[p2,m],{p1,m},{p2,m},{col1,col2}].TGA[].(\
 FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].SpinorV[\
 p2,m]],{p1,m},{p2,m},{col1,col2}]/.{DiracGamma[5]\[Rule]-DiracGamma[5]\
 }).TGA[]/.DiracTrace\[Rule]Identity)]]; FCClearScalarProducts[]; \
-$BreitMaison=False; res", "1"},
+FCSetDiracGammaScheme[\"NDR\"]; \n res", "1"},
 
 {"fcstFMInsertCovariantProjectorNormalization-ID9",
-"$BreitMaison=True; FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
+"FCSetDiracGammaScheme[\"BMHV\"]; \n FCClearScalarProducts[]; TC[p1]=EN; TC[p2]=EN; \
 ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](ChangeDimension[\
@@ -893,6 +893,6 @@ FMUseSimplifiedCovariantProjectors\[Rule]True].TGA[].(\
 FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].SpinorV[\
 p2,m]],{p1,m},{p2,m},{col1,col2},FMUseSimplifiedCovariantProjectors\
 \[Rule]True]/.{DiracGamma[5]\[Rule]-DiracGamma[5]}).TGA[]/.DiracTrace\
-\[Rule]Identity)]]; FCClearScalarProducts[]; $BreitMaison=False; res",
+\[Rule]Identity)]]; FCClearScalarProducts[]; FCSetDiracGammaScheme[\"NDR\"]; \n res",
 	"1"}
 });

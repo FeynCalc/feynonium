@@ -125,7 +125,7 @@ FCSetPauliSigmaScheme["Naive"];
 (*Nonrelativistic expansion of spinor chains*)
 
 
-AbsoluteTiming[amp2=amp1//Collect2[#,DiracSpinor]&//
+AbsoluteTiming[amp2=amp1//Collect2[#,Spinor]&//
 FMSpinorChainExplicit2[#,FMSpinorNormalization->"nonrelativistic"]&//
 	ReplaceAll[#,{PauliEta[-I].PauliSigma[x_,D-1].PauliEta[I]:>
 	CartesianPair[CartesianMomentum[ST1,D-1],x],
