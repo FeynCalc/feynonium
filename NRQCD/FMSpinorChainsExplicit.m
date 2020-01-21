@@ -100,7 +100,7 @@ FMSpinorChainsExplicit[expr_, {p1final_, m1_}, {p2final_, m2_}, OptionsPattern[]
 
 		If [OptionValue[FCVerbose]===False,
 			sceVerbose=$VeryVerbose,
-			If[MatchQ[OptionValue[FCVerbose], _Integer?Positive | 0],
+			If[MatchQ[OptionValue[FCVerbose], _Integer],
 				sceVerbose=OptionValue[FCVerbose]
 			];
 		];

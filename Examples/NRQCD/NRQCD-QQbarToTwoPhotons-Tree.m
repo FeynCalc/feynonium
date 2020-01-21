@@ -30,8 +30,7 @@ If[ $FrontEnd === Null,
 NRQCD for the exlusive electromagnetic decay of a heavy quarkonium \
 into two photons using NRQCD factorization at the amplitude level."];
 ];
-$LoadAddOns={"FeynOnium"};
-$LoadFeynArts = True;
+$LoadAddOns={"FeynArts","FeynOnium"};
 <<FeynCalc`
 $FAVerbose=0;
 
@@ -443,7 +442,7 @@ Solve[SelectNotFree2[getMatchingCoeffJ2[4],ST]==
 
 
 (* ::Subsection:: *)
-(*Check with the the known results*)
+(*Check with the known results*)
 
 
 Print["Check with the known results: ",

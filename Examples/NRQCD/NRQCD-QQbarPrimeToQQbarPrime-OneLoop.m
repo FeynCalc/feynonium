@@ -28,8 +28,7 @@ If[ $FrontEnd === Null,
 for the dimension 6 4-fermion operators of the \
 NRQCD Lagrangian in the unequal mass case."];
 ];
-$LoadAddOns={"FeynHelpers","FeynOnium"};
-$LoadFeynArts = True;
+$LoadAddOns={"FeynArts","FeynHelpers","FeynOnium"};
 <<FeynCalc`
 $FAVerbose=0;
 

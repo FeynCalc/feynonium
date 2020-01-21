@@ -54,7 +54,7 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 
 		If [OptionValue[FCVerbose]===False,
 			sce2Verbose=$VeryVerbose,
-			If[MatchQ[OptionValue[FCVerbose], _Integer?Positive | 0],
+			If[MatchQ[OptionValue[FCVerbose], _Integer],
 				sce2Verbose=OptionValue[FCVerbose]
 			];
 		];
@@ -109,11 +109,9 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 		];
 
 		diracObjectsEval  = diracObjectsEval /. normRule;
+		repRule = Thread[Rule[diracObjects, diracObjectsEval]];
 
-
-		repRule = MapThread[Rule[#1, #2] &, {diracObjects, diracObjectsEval}];
-
-		res = ex/.repRule /. times -> Times;
+		res = ex /. Dispatch[repRule] /. times -> Times;
 
 		If[ OptionValue[DotSimplify],
 			time = AbsoluteTime[];

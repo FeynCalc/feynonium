@@ -54,10 +54,8 @@ FMToStandardSpinorChains[expr_, OptionsPattern[]]:=
 
 		diracObjectsEval =diracObjects/.Dispatch[convRules]/.dsHead->Identity;
 
-		repRule = MapThread[Rule[#1, #2] &, {diracObjects, diracObjectsEval}];
-
-
-		res = ex/.repRule;
+		repRule = Thread[Rule[diracObjects, diracObjectsEval]];
+		res = ex /. Dispatch[repRule];
 
 		res
 

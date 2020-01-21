@@ -51,7 +51,7 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 
 		If [OptionValue[FCVerbose]===False,
 			ctdVerbose=$VeryVerbose,
-			If[MatchQ[OptionValue[FCVerbose], _Integer?Positive | 0],
+			If[MatchQ[OptionValue[FCVerbose], _Integer],
 				ctdVerbose=OptionValue[FCVerbose]
 			];
 		];

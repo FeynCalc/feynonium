@@ -29,8 +29,7 @@ If[ $FrontEnd === Null,
 and NRQCD for the exlusive electromagnetic decay of a J/Psi into three
 photons using NRQCD factorization at the level of total decay rates."];
 ];
-$LoadAddOns={"FeynOnium"};
-$LoadFeynArts = True;
+$LoadAddOns={"FeynArts","FeynOnium"};
 <<FeynCalc`
 $FAVerbose=0;
 
