@@ -19,6 +19,18 @@ Finally p1, m1 and p2, m2 denote the mass and the momentum of the first and the 
 
 FMBlockMatrixProduct::usage="";
 
+FMTraceComponent::usage=
+"FMTraceComponent[{a,b},{i,j}] returns 1/3 d^ij*(a.b), i.e. the J=0 component \
+of the 2-tensor a^i b^j, where a^i and b^j are Cartesian 3-vecotrs.";
+
+FMAntiSymmetricComponent::usage=
+"FMSymmetricTracelessComponent[{a,b},{i,j}] returns (a^i b^j - a^j b^i)/2, i.e. the the J=1 \
+component of the 2-tensor a^i b^j, where a^i and b^j are Cartesian 3-vecotrs";
+
+FMSymmetricTracelessComponent::usage=
+"FMSymmetricTracelessComponent[{a,b},{i,j}] returns (a^i b^j + a^j b^i)/2 - 1/3 d^ij*(a.b), \
+i.e. the the J=2 component of the 2-tensor a^i b^j, where a^i and b^j are Cartesian 3-vecotrs";
+
 Begin["`Package`"]
 End[]
 
@@ -26,6 +38,9 @@ Begin["`FMSharedObjects`Private`"]
 bmtmp::usage="";
 
 DataType[FMStandardSpinorChain, FCTensor] = True;
+DataType[FMTraceComponent, FCTensor] = True;
+DataType[FMAntiSymmetricComponent, FCTensor] = True;
+DataType[FMSymmetricTracelessComponent, FCTensor] = True;
 
 FMStandardSpinorChain["T", _Integer, _List, _List, 0, _]:=
 	0;
@@ -94,6 +109,85 @@ FMBlockMatrixProduct[x_List, y_List] :=
 
 FMBlockMatrixProduct[x_List, y_List, z__List] :=
 	FMBlockMatrixProduct[x, FMBlockMatrixProduct[y, z]];
+
+
+Options[FMTraceComponent] ={
+	Explicit	->	True,
+	FCE			->	False
+};
+
+Options[FMAntiSymmetricComponent] ={
+	Explicit	->	True,
+	FCE			->	False
+};
+
+Options[FMSymmetricTracelessComponent] ={
+	Explicit	->	True,
+	FCE			->	False
+};
+
+FMTraceComponent /:
+	MakeBoxes[FMTraceComponent[{a_,b_},{i_,j_}, OptionsPattern[]], TraditionalForm] :=
+	SubscriptBox[RowBox[{"(", ToBoxes[CV[a, i], TraditionalForm], ToBoxes[CV[b, j], TraditionalForm], ")"}], "J=0"];
+
+FMTraceComponent /:
+	MakeBoxes[FMTraceComponent[{a_,b_},{i:(CartesianMomentum|CartesianIndex)[__],j:(CartesianMomentum|CartesianIndex)[__]}, OptionsPattern[]], TraditionalForm] :=
+		SubscriptBox[RowBox[{"(", ToBoxes[CartesianPair[CartesianMomentum[a], i], TraditionalForm], ToBoxes[CartesianPair[CartesianMomentum[b], j], TraditionalForm], ")"}], "J=0"];
+
+FMTraceComponent[{a_,b_},{i_,j_}, OptionsPattern[]]:=
+	Block[{res},
+		res = 1/3 CartesianPair[CartesianIndex[i],CartesianIndex[j]] *
+			CartesianPair[CartesianMomentum[a],CartesianMomentum[b]];
+		If[	OptionValue[FCE],
+			res = FCE[res]
+		];
+		res
+	]/; OptionValue[Explicit];
+
+FMTraceComponent[{a_,b_},{i_,j_}, opts:OptionsPattern[]]:=
+	FMTraceComponent[{a,b},{CartesianIndex[i],CartesianIndex[j]},opts]/;
+		!OptionValue[Explicit] && (!MemberQ[{CartesianIndex,CartesianMomentum},Head[i]] || !MemberQ[{CartesianIndex,CartesianMomentum},Head[j]]);
+
+FMAntiSymmetricComponent /:
+	MakeBoxes[FMAntiSymmetricComponent[{a_,b_},{i:(CartesianMomentum|CartesianIndex)[__],j:(CartesianMomentum|CartesianIndex)[__]}, OptionsPattern[]], TraditionalForm] :=
+		SubscriptBox[RowBox[{"(", ToBoxes[CartesianPair[CartesianMomentum[a], i], TraditionalForm], ToBoxes[CartesianPair[CartesianMomentum[b], j], TraditionalForm], ")"}], "J=1"];
+
+FMAntiSymmetricComponent[{a_,b_},{i_,j_}, OptionsPattern[]]:=
+	Block[{res},
+		res = 1/2 (
+			CartesianPair[CartesianMomentum[a],CartesianIndex[i]] CartesianPair[CartesianMomentum[b],CartesianIndex[j]] -
+			CartesianPair[CartesianMomentum[a],CartesianIndex[j]] CartesianPair[CartesianMomentum[b],CartesianIndex[i]]
+		);
+		If[	OptionValue[FCE],
+			res = FCE[res]
+		];
+		res
+	]/; OptionValue[Explicit];
+
+FMAntiSymmetricComponent[{a_,b_},{i_,j_}, opts:OptionsPattern[]]:=
+	FMAntiSymmetricComponent[{a,b},{CartesianIndex[i],CartesianIndex[j]},opts]/;
+		!OptionValue[Explicit] && (!MemberQ[{CartesianIndex,CartesianMomentum},Head[i]] || !MemberQ[{CartesianIndex,CartesianMomentum},Head[j]]);
+
+FMSymmetricTracelessComponent /:
+	MakeBoxes[FMSymmetricTracelessComponent[{a_,b_},{i:(CartesianMomentum|CartesianIndex)[__],j:(CartesianMomentum|CartesianIndex)[__]}, OptionsPattern[]], TraditionalForm] :=
+		SubscriptBox[RowBox[{"(", ToBoxes[CartesianPair[CartesianMomentum[a], i], TraditionalForm], ToBoxes[CartesianPair[CartesianMomentum[b], j], TraditionalForm], ")"}], "J=2"];
+
+
+FMSymmetricTracelessComponent[{a_,b_},{i_,j_}, OptionsPattern[]]:=
+	Block[{res},
+		res = 1/2 (
+			CartesianPair[CartesianMomentum[a],CartesianIndex[i]] CartesianPair[CartesianMomentum[b],CartesianIndex[j]] +
+			CartesianPair[CartesianMomentum[a],CartesianIndex[j]] CartesianPair[CartesianMomentum[b],CartesianIndex[i]]
+		) - 1/3 CartesianPair[CartesianIndex[i],CartesianIndex[j]] CartesianPair[CartesianMomentum[a],CartesianMomentum[b]];
+		If[	OptionValue[FCE],
+			res = FCE[res]
+		];
+		res
+	]/; OptionValue[Explicit];
+
+FMSymmetricTracelessComponent[{a_,b_},{i_,j_}, opts:OptionsPattern[]]:=
+	FMSymmetricTracelessComponent[{a,b},{CartesianIndex[i],CartesianIndex[j]},opts]/;
+		!OptionValue[Explicit] && (!MemberQ[{CartesianIndex,CartesianMomentum},Head[i]] || !MemberQ[{CartesianIndex,CartesianMomentum},Head[j]]);
 
 
 FCPrint[1,"FMSharedObjects loaded."];

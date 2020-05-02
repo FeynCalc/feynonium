@@ -53,3 +53,62 @@ i],0}},{{PauliXi[I]},{PauliXi[I]}}]",
 "PauliEta[-I] . (0 . PauliXi[I] + (-SI[i]) . PauliXi[I]) + \
 PauliEta[-I] . (0 . PauliXi[I] + SI[i] . PauliXi[I])"}
 })
+
+
+Tests`Shared`FMComponents =
+({
+{"FMComponents-ID1", "FMTraceComponent[{a,b},{i,j},FCE->True]",
+"(CSP[a, b]*KD[i, j])/3"},
+{"FMComponents-ID2",
+"FMSymmetricTracelessComponent[{a,b},{i,j},FCE->True]",
+"(CV[a, j]*CV[b, i] + CV[a, i]*CV[b, j])/2 - (CSP[a, b]*KD[i, \
+j])/3"},
+{"FMComponents-ID3",
+"FMAntiSymmetricComponent[{a,b},{i,j},FCE->True]",
+"(-(CV[a, j]*CV[b, i]) + CV[a, i]*CV[b, j])/2"},
+{"FMComponents-ID4",
+"FMTraceComponent[{a,b},{i,j},Explicit\[Rule]False]",
+"FMTraceComponent[{a, b}, {CartesianIndex[i], CartesianIndex[j]}, \
+Explicit -> False]"},
+{"FMComponents-ID5",
+"FMAntiSymmetricComponent[{a,b},{i,j},Explicit\[Rule]False]",
+"FMAntiSymmetricComponent[{a, b}, {CartesianIndex[i], \
+CartesianIndex[j]}, Explicit -> False]"},
+{"FMComponents-ID6",
+"FMSymmetricTracelessComponent[{a,b},{i,j},Explicit\[Rule]False]",
+"FMSymmetricTracelessComponent[{a, b}, {CartesianIndex[i], \
+CartesianIndex[j]}, Explicit -> False]"},
+{"FMComponents-ID7",
+"Contract[FMTraceComponent[{a,b},{i,j},Explicit\[Rule]False]CV[d,i]\
+]", "FMTraceComponent[{a, b}, {CartesianMomentum[d], \
+CartesianIndex[j]}, Explicit -> False]"},
+{"FMComponents-ID8",
+"Contract[FMTraceComponent[{a,b},{i,j},Explicit\[Rule]False]CV[d,i]\
+CV[e,j]]",
+"FMTraceComponent[{a, b}, {CartesianMomentum[d], \
+CartesianMomentum[e]}, Explicit -> False]"},
+{"FMComponents-ID9",
+"Contract[FMAntiSymmetricComponent[{a,b},{i,j},Explicit\[Rule]\
+False]CV[d,i]]",
+"FMAntiSymmetricComponent[{a, b}, {CartesianMomentum[d], \
+CartesianIndex[j]}, Explicit -> False]"},
+{"FMComponents-ID10",
+"Contract[FMAntiSymmetricComponent[{a,b},{i,j},Explicit\[Rule]\
+False]CV[d,i]CV[e,j]]",
+"FMAntiSymmetricComponent[{a, b}, {CartesianMomentum[d], \
+CartesianMomentum[e]}, Explicit -> False]"},
+{"FMComponents-ID11",
+"Contract[FMSymmetricTracelessComponent[{a,b},{i,j},Explicit\[Rule]\
+False]CV[d,i]]",
+"FMSymmetricTracelessComponent[{a, b}, {CartesianMomentum[d], \
+CartesianIndex[j]}, Explicit -> False]"},
+{"FMComponents-ID12",
+"Contract[FMSymmetricTracelessComponent[{a,b},{i,j},Explicit\[Rule]\
+False]CV[d,i]CV[e,j]]",
+"FMSymmetricTracelessComponent[{a, b}, {CartesianMomentum[d], \
+CartesianMomentum[e]}, Explicit -> False]"}
+})
+
+
+
+
