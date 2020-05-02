@@ -1,11 +1,11 @@
-(* :Title: NRQCD.mt														*)
+(* :Title: NRQCD.mt															*)
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2018 Vladyslav Shtabovenko
+	Copyright (C) 2015-2020 Vladyslav Shtabovenko
 *)
 
-(* :Summary:  Unit tests for FeynOnium									*)
+(* :Summary:  Unit tests for FeynOnium										*)
 
 (* ------------------------------------------------------------------------ *)
 

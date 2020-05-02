@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This software is covered by the GNU General Public License 3.
+# Copyright (C) 2015-2020 Vladyslav Shtabovenko
+
 # This small bash script provides a nice way to check that
 # FeynOnium is working properly using real-life examples.
 

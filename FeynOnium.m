@@ -6,7 +6,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2017 Vladyslav Shtabovenko
+	Copyright (C) 2015-2020 Vladyslav Shtabovenko
 *)
 
 (* :Summary: 	Tools for calculations in non-relativistic EFTs			 	*)
