@@ -50,7 +50,7 @@ For usage information see the supplied examples.
 
 If you use FeynOnium in you work, please cite
 
-* N. Brambilla, V. Shtabovenko and A.Vairo, TUM-EFT 92/17, in preparation
+* N. Brambilla, H. S. Chung, V. Shtabovenko and A.Vairo, TUM-EFT 92/17, in preparation
 
 # License
 

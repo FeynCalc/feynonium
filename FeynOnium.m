@@ -25,7 +25,7 @@ End[]
 
 Begin["`FeynOnium`Private`"];
 
-$FeynOniumVersion="0.5.0";
+$FeynOniumVersion="1.0.0";
 
 $FeynOniumDirectory =
 ToFileName[{$FeynCalcDirectory, "AddOns", "FeynOnium"}];
