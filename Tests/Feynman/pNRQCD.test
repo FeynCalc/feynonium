@@ -1,0 +1,119 @@
+(* :Title: FMSpinorChainExplicit2.test														*)
+
+(*
+	This software is covered by the GNU General Public License 3.
+	Copyright (C) 2015-2020 Vladyslav Shtabovenko
+*)
+
+(* :Summary:  Framework independent unit tests for pNRQCD	*)
+
+(* ------------------------------------------------------------------------ *)
+
+Tests`Feynman`pNRQCD =
+({
+{"pNRQCD-ID1", "FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,0,c}]",
+"FMOctetGluonSingletVertex[{\"V_A\", r}, a, {P, 0, c}]"},
+{"pNRQCD-ID2", "FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,i,c}]",
+"FMOctetGluonSingletVertex[{\"V_A\", r}, a, {P, i, c}]"},
+{"pNRQCD-ID3", "FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,0,c}]",
+"FMOctetGluonSingletVertex[{\"V_A\", r}, a, {P, 0, c}]"},
+{"pNRQCD-ID4", "FMOctetGluonOctetVertex[{\"V_B\",r},a,{P,i,c},b]",
+"FMOctetGluonOctetVertex[{\"V_B\", r}, a, {P, i, c}, b]"},
+{"pNRQCD-ID5", "FMOctetGluonOctetVertex[{\"V_B\",r},a,{P,0,c},b]",
+"FMOctetGluonOctetVertex[{\"V_B\", r}, a, {P, 0, c}, b]"},
+{"pNRQCD-ID6", "FMOctetGluonOctetVertex[{\"1\"},a,{P,0,b},c]",
+"FMOctetGluonOctetVertex[{\"1\"}, a, {P, 0, b}, c]"},
+{"pNRQCD-ID7",
+"FMOctetGluonGluonOctetVertex[{\"V_B\",r},a,{p1,i,d},{p2,0,e},b]",
+"FMOctetGluonGluonOctetVertex[{\"V_B\", r}, a, {p1, i, d}, {p2, 0, \
+e}, b]"},
+{"pNRQCD-ID8",
+"FMOctetGluonGluonSingletVertex[{\"V_A\",r},a,{p1,i,b},{p2,0,c}]",
+"FMOctetGluonGluonSingletVertex[{\"V_A\", r}, a, {p1, i, b}, {p2, \
+0, c}]"},
+{"pNRQCD-ID9", "FMSingletPropagator[{p,En,n}]",
+"FMSingletPropagator[{p, En, n}]"},
+{"pNRQCD-ID10", "FMOctetPropagator[{p,En,n},{a,b}]",
+"FMOctetPropagator[{p, En, n}, {a, b}]"},
+{"pNRQCD-ID11", "FMCoulombGaugeGluonPropagator[p,{i1,a},{i2,b}]",
+"FMCoulombGaugeGluonPropagator[p, {i1, a}, {i2, b}]"},
+{"pNRQCD-ID12", "FMCoulombGaugeGluonPropagator[p,{0,a},{0,b}]",
+"FMCoulombGaugeGluonPropagator[p, {0, a}, {0, b}]"},
+{"pNRQCD-ID13", "FMCoulombGaugeGluonPropagator[p,{i1,a},{i2,b}]",
+"FMCoulombGaugeGluonPropagator[p, {i1, a}, {i2, b}]"},
+{"pNRQCD-ID14",
+"FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,0,c},Explicit\[Rule]\
+True]", "Sqrt[Tf/SUNN]*r[CartesianMomentum[P, -1 + \
+D]]*SMP[\"g_s\"]*SMP[\"V_A\"]*SUNDelta[SUNIndex[a], SUNIndex[c]]"},
+{"pNRQCD-ID15",
+"FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,i,c},Explicit\[Rule]\
+True]", "-(Sqrt[Tf/SUNN]*r[CartesianIndex[i, -1 + \
+D]]*SMP[\"g_s\"]*SMP[\"V_A\"]*SUNDelta[SUNIndex[a], \
+SUNIndex[c]]*TemporalPair[ExplicitLorentzIndex[0], \
+TemporalMomentum[P]])"},
+{"pNRQCD-ID16",
+"FMOctetGluonSingletVertex[{\"V_A\",r},a,{P,0,c},Explicit\[Rule]\
+True]", "Sqrt[Tf/SUNN]*r[CartesianMomentum[P, -1 + \
+D]]*SMP[\"g_s\"]*SMP[\"V_A\"]*SUNDelta[SUNIndex[a], SUNIndex[c]]"},
+{"pNRQCD-ID17",
+"FMOctetGluonOctetVertex[{\"V_B\",r},a,{P,i,c},b,Explicit\[Rule]\
+True]", "-(r[CartesianIndex[i, -1 + \
+D]]*SMP[\"g_s\"]*SMP[\"V_B\"]*SUND[SUNIndex[a], SUNIndex[b], \
+SUNIndex[c]]*TemporalPair[ExplicitLorentzIndex[0], \
+TemporalMomentum[P]])/2"},
+{"pNRQCD-ID18",
+"FMOctetGluonOctetVertex[{\"V_B\",r},a,{P,0,c},b,Explicit\[Rule]\
+True]", "(r[CartesianMomentum[P, -1 + \
+D]]*SMP[\"g_s\"]*SMP[\"V_B\"]*SUND[SUNIndex[a], SUNIndex[b], \
+SUNIndex[c]])/2"},
+{"pNRQCD-ID19",
+"FMOctetGluonOctetVertex[{\"1\"},a,{P,0,b},c,Explicit\[Rule]True]",
+	"SMP[\"g_s\"]*SUNF[SUNIndex[a], SUNIndex[b], SUNIndex[c]]"},
+{"pNRQCD-ID20",
+"FMOctetGluonGluonOctetVertex[{\"V_B\",r},a,{p1,i,d},{p2,0,e},b,\
+Explicit\[Rule]True]",
+"(-I/2)*r[CartesianIndex[i, -1 + \
+D]]*SMP[\"g_s\"]^2*SMP[\"V_B\"]*SUND[SUNIndex[a], SUNIndex[b], \
+SUNIndex[col25]]*SUNF[SUNIndex[col25], SUNIndex[d], SUNIndex[e]]"},
+{"pNRQCD-ID21",
+"FMOctetGluonGluonSingletVertex[{\"V_A\",r},a,{p1,i,b},{p2,0,c},\
+Explicit\[Rule]True]",
+"(-I)*Sqrt[Tf/SUNN]*r[CartesianIndex[i, -1 + \
+D]]*SMP[\"g_s\"]^2*SMP[\"V_A\"]*SUNF[SUNIndex[a], SUNIndex[b], \
+SUNIndex[c]]"},
+{"pNRQCD-ID22", "FMSingletPropagator[{p,En,n},Explicit\[Rule]True]",
+	"I*FMKet[n] . \
+FMBra[n]*FeynAmpDenominator[GenericPropagatorDenominator[-En + \
+TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]], {1, 1}]]"},
+{"pNRQCD-ID23",
+"FMOctetPropagator[{p,En,n},{a,b},Explicit\[Rule]True]",
+"I*FMKet[n] . \
+FMBra[n]*FeynAmpDenominator[GenericPropagatorDenominator[-En + \
+TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p]], {1, \
+1}]]*SUNDelta[SUNIndex[a], SUNIndex[b]]"},
+{"pNRQCD-ID24",
+"FMCoulombGaugeGluonPropagator[p,{i1,a},{i2,b},Explicit\[Rule]True]\
+", "I*(CartesianPair[CartesianIndex[i1, -1 + D], CartesianIndex[i2, \
+-1 + D]] - CartesianPair[CartesianIndex[i1, -1 + D], \
+CartesianMomentum[p, -1 + D]]*CartesianPair[CartesianIndex[i2, -1 + \
+D], CartesianMomentum[p, -1 + \
+D]]*FeynAmpDenominator[CartesianPropagatorDenominator[\
+CartesianMomentum[p, -1 + D], 0, 0, {1, \
+-1}]])*FeynAmpDenominator[StandardPropagatorDenominator[Momentum[p, \
+D], 0, 0, {1, 1}]]*SUNDelta[SUNIndex[a], SUNIndex[b]]"},
+{"pNRQCD-ID25",
+"FMCoulombGaugeGluonPropagator[p,{0,a},{0,b},Explicit\[Rule]True]",
+	"I*FeynAmpDenominator[CartesianPropagatorDenominator[\
+CartesianMomentum[p, -1 + D], 0, 0, {1, -1}]]*SUNDelta[SUNIndex[a], \
+SUNIndex[b]]"},
+{"pNRQCD-ID26",
+"FMCoulombGaugeGluonPropagator[p,{i1,a},{i2,b},Explicit\[Rule]True]\
+", "I*(CartesianPair[CartesianIndex[i1, -1 + D], CartesianIndex[i2, \
+-1 + D]] - CartesianPair[CartesianIndex[i1, -1 + D], \
+CartesianMomentum[p, -1 + D]]*CartesianPair[CartesianIndex[i2, -1 + \
+D], CartesianMomentum[p, -1 + \
+D]]*FeynAmpDenominator[CartesianPropagatorDenominator[\
+CartesianMomentum[p, -1 + D], 0, 0, {1, \
+-1}]])*FeynAmpDenominator[StandardPropagatorDenominator[Momentum[p, \
+D], 0, 0, {1, 1}]]*SUNDelta[SUNIndex[a], SUNIndex[b]]"}
+});

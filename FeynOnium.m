@@ -34,8 +34,10 @@ ToFileName[{$FeynCalcDirectory, "AddOns", "FeynOnium"}];
 BeginPackage["FeynCalc`"];
 FCDeclareHeader/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"Shared"}]];
 FCDeclareHeader/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"NRQCD"}]];
+FCDeclareHeader/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"Feynman"}]];
 Get/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"Shared"}]];
 Get/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"NRQCD"}]];
+Get/@FileNames[{"*.m"},ToFileName[{$FeynOniumDirectory,"Feynman"}]];
 EndPackage[]
 
 
