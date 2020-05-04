@@ -162,9 +162,9 @@ InstallFeynOnium[OptionsPattern[]]:=
 
 		If[OptionValue[InstallFeynOniumDevelopmentVersion],
 			zip = OptionValue[FeynOniumDevelopmentVersionLink];
-			zipDir = "feynhelpers-master",
+			zipDir = "feynonium-master",
 			zip = OptionValue[FeynOniumStableVersionLink];
-			zipDir = "feynhelpers-stable"
+			zipDir = "feynonium-stable"
 		];
 
 		xInstalled 	  = False;
