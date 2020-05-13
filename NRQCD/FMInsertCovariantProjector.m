@@ -60,13 +60,16 @@ Options[FMInsertCovariantProjector] = {
 	FMUseSimplifiedCovariantProjectors -> False
 };
 
+FMInsertCovariantProjector[0, {_, _}, {_, _}, ___]:=
+	0;
+
 (*Sping singlet color singlet*)
 FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}/; !OptionQ[{p2,m}], {colFu1_, colFu2_}/; !OptionQ[{colFu1, colFu2}], OptionsPattern[]] :=
 	Block[{},
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
 				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
-		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colFu1, colFu2}]
+		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colFu1, colFu2}]/; expr=!=0;
 	];
 
 (*Sping triplet color singlet*)
@@ -76,7 +79,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol/; !Optio
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
 				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
 		covariantProjector[expr, {p1, m}, {p2, m}, lorIndex, {colFu1, colFu2}]
-	];
+	]/; expr=!=0;
 
 (*Sping singlet color octet*)
 FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, {colAdj_, colFu1_, colFu2_}/; !OptionQ[{colAdj, colFu1, colFu2}], OptionsPattern[]] :=
@@ -89,7 +92,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, {colAdj_, colFu1_, colFu
 			Abort[]
 		];
 		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colAdj, colFu1, colFu2}]
-	];
+	]/; expr=!=0;
 
 (*Sping triplet color octet*)
 FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol, {colAdj_, colFu1_, colFu2_}/; !OptionQ[{colAdj, colFu1, colFu2}], OptionsPattern[]] :=
@@ -102,7 +105,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol, {colAdj
 			Abort[]
 		];
 		covariantProjector[expr, {p1, m}, {p2, m}, lorIndex, {colAdj, colFu1, colFu2}]
-	];
+	]/; expr=!=0;
 
 
 covariantProjector[expr_, {p1_, m_}, {p2_, m_}, diracGammaIndex_, colors_List] :=
