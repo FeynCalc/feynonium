@@ -72,16 +72,14 @@ Vertex[a_][b_]],___,Propagator[External][Vertex[1][2], Vertex[a_][b_]],___]->mar
 diags=InsertFields[CreateTopologies[1,2->2,
 ExcludeTopologies->{Tadpoles,pairAnnihilation}],
 {F[3,{2,cq}],-F[3,{2,cqbar}]}->{V[5],V[5]},
-InsertionLevel->{Particles},Model -> FileNameJoin[{"QCD","QCD"}],
-GenericModel -> FileNameJoin[{"QCD","QCD"}],
+InsertionLevel->{Particles},Model -> "SMQCD",
 ExcludeParticles->{S[_],V[1|2|3|4],F[1|2|4],F[3,{1|3,_}]}];
 
 
 diagsCT=InsertFields[CreateCTTopologies[1,2->2,
 ExcludeTopologies->{Tadpoles,pairAnnihilation}],
 {F[3,{2,cq}],-F[3,{2,cqbar}]}->{V[5],V[5]},
-InsertionLevel->{Particles},Model -> FileNameJoin[{"QCD","QCD"}],
-GenericModel -> FileNameJoin[{"QCD","QCD"}]];
+InsertionLevel->{Particles},Model -> "SMQCD"];
 
 
 (* ::Section:: *)
@@ -117,10 +115,6 @@ ctDiagsB=DiagramExtract[diagsCT,{5,7}];
 Paint[ctDiagsB,
 ColumnsXRows->{2,1}, Numbering->False,SheetHeader->False,
 ImageSize->{512,256}];
-
-
-(* ::Text:: *)
-(*Diagrams from Fig. 3 d) in arXiv:hep-ph/9707223*)
 
 
 diagsD=DiagramExtract[diags,{2,4,6,8}];
@@ -195,7 +189,8 @@ ampCreate[ex_]:=FCFAConvert[CreateFeynAmp[ex, PreFactor->1],
 	diagsF,diagsG,diagsH};
 
 
-ctAmpB[0]=ampCreate[ctDiagsB];
+ctAmpB[0]=ampCreate[ctDiagsB]//ReplaceAll[#,{Conjugate[(dZfR1|dZfL1)[3,2,2]]->dZpsi,(dZfR1|dZfL1)[3,2,2]->dZpsi,
+dMf1[3,2]->dZm SMP["m_Q"]}]&//DiracSubstitute67//DotSimplify//DiracSimplify;
 
 
 (* ::Section:: *)
@@ -572,12 +567,12 @@ AbsoluteTiming[{rvAJ2[0],rvDJ2[0],rvEJ2[0],rvFJ2[0],rvGJ2[0],rvHJ2[0]}=
 
 (* ::Text:: *)
 (*The b) diagrams require mass renormalization in the on-shell scheme. Since we generated the*)
-(*corresponding mass counterterm at the very beginning, we can evaluate it now using Zm for the*)
+(*corresponding mass counterterm at the very beginning, we can evaluate it now using dZm for the*)
 (*on-shell scheme.*)
 
 
 ctAmpB[5]=ctAmpB[4]//FRH//ReplaceAll[#,P->k1+k2]&//FeynAmpDenominatorExplicit//ExpandScalarProduct//ReplaceRepeated[#,{
-Zpsi->1,Zm->1-3*CF*SMP["alpha_s"]*(4/3 + SMP["Delta"]+Log[ScaleMu^2/QMass^2])/(4*Pi)}]&//Series[#,{SMP["alpha_s"],0,2}]&//
+dZpsi->0,dZm->-3*CF*SMP["alpha_s"]*(4/3 + SMP["Delta"]+Log[ScaleMu^2/QMass^2])/(4*Pi)}]&//Series[#,{SMP["alpha_s"],0,2}]&//
 	Normal//Simplify//FCShowEpsilon;
 
 
