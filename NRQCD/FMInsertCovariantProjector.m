@@ -69,8 +69,8 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}/; !OptionQ[{p2,m}], {colF
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
 				OptionValue[FMNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
-		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colFu1, colFu2}]/; expr=!=0;
-	];
+		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colFu1, colFu2}]
+	]/; expr=!=0;
 
 (*Sping triplet color singlet*)
 FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol/; !OptionQ[lorIndex], {colFu1_, colFu2_}/; !OptionQ[{colFu1, colFu2}],  OptionsPattern[]] :=

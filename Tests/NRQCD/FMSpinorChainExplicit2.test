@@ -45,7 +45,7 @@ FMToStandardSpinorChains[SpinorUBar[p1,m1].CGA[i].GA[5].SpinorV[p2,m2]\
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
 SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
-m1].DiracSigma[CGA[i],CGA[j]].SpinorV[p2,m2]]]//Simplify", "0"},
+m1].DiracSigma[CGA[i],CGA[j]].SpinorV[p2,m2]]]// PauliSimplify[#, PauliReduce -> True] & // Simplify", "0"},
 {"fcstFMSpinorChainExplicit2-ID8",
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorU[p2,m2]],{p1,m1},{\
@@ -85,7 +85,7 @@ m1].DiracSigma[TGA[],CGA[i]].SpinorU[p2,m2]]]//Simplify", "0"},
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
 SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
-m1].DiracSigma[CGA[i],CGA[j]].SpinorU[p2,m2]]]//Simplify", "0"},
+m1].DiracSigma[CGA[i],CGA[j]].SpinorU[p2,m2]]]// PauliSimplify[#, PauliReduce -> True] & // Simplify", "0"},
 {"fcstFMSpinorChainExplicit2-ID16",
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorVBar[p1,m1].SpinorV[p2,m2]],{p1,m1},{\
@@ -120,12 +120,23 @@ FMToStandardSpinorChains[SpinorVBar[p1,m1].CGA[i].GA[5].SpinorV[p2,m2]\
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[TGA[],CGA[i]].\
 SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
-m1].DiracSigma[TGA[],CGA[i]].SpinorV[p2,m2]]]//Simplify", "0"},
+m1].DiracSigma[TGA[],CGA[i]].SpinorV[p2,m2]]]// PauliSimplify[#, PauliReduce -> True] & //
+FCCanonicalizeDummyIndices // Simplify", "0"},
 {"fcstFMSpinorChainExplicit2-ID23",
-"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
-FMToStandardSpinorChains[SpinorVBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
-SpinorV[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorVBar[p1,\
-m1].DiracSigma[CGA[i],CGA[j]].SpinorV[p2,m2]]]//Simplify", "0"},
+"FCCanonicalizeDummyIndices[
+		FMSpinorChainsExplicit[
+		FMToStandardSpinorChains[
+		SpinorVBar[p1, m1].DiracSigma[CGA[i], CGA[j]].SpinorV[p2,
+			m2]], {p1, m1}, {p2, m2}] -
+		FMSpinorChainExplicit2[
+		SpinorVBar[p1, m1].DiracSigma[CGA[i], CGA[j]].SpinorV[p2,
+			m2]]] // PauliSimplify[#, PauliReduce -> True] & //
+	FCCanonicalizeDummyIndices // Simplify //
+	ReplaceAll[#,
+	PauliEta[-I].PauliSigma[CartesianIndex[x_]].PauliEta[I] :>
+	CV[a, i] CV[b, j] CV[V, x]] & // Contract //
+FMCartesianSchoutenBruteForce[#, {V, p1, p2, a, b},
+	FCVerbose -> -1] & // Simplify", "0"},
 {"fcstFMSpinorChainExplicit2-ID24",
 "FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
 FMToStandardSpinorChains[SpinorUBar[p1,m1].SpinorU[p2,m2]],{p1,m1},{\
@@ -162,10 +173,20 @@ FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[TGA[],CGA[i]].\
 SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
 m1].DiracSigma[TGA[],CGA[i]].SpinorU[p2,m2]]]//Simplify", "0"},
 {"fcstFMSpinorChainExplicit2-ID31",
-"FCCanonicalizeDummyIndices[FMSpinorChainsExplicit[\
-FMToStandardSpinorChains[SpinorUBar[p1,m1].DiracSigma[CGA[i],CGA[j]].\
-SpinorU[p2,m2]],{p1,m1},{p2,m2}]-FMSpinorChainExplicit2[SpinorUBar[p1,\
-m1].DiracSigma[CGA[i],CGA[j]].SpinorU[p2,m2]]]//Simplify", "0"}
+"FCCanonicalizeDummyIndices[
+		FMSpinorChainsExplicit[
+		FMToStandardSpinorChains[
+		SpinorUBar[p1, m1].DiracSigma[CGA[i], CGA[j]].SpinorU[p2,
+			m2]], {p1, m1}, {p2, m2}] -
+		FMSpinorChainExplicit2[
+		SpinorUBar[p1, m1].DiracSigma[CGA[i], CGA[j]].SpinorU[p2,
+			m2]]] // PauliSimplify[#, PauliReduce -> True] & //
+	FCCanonicalizeDummyIndices // Simplify //
+	ReplaceAll[#,
+	PauliXi[-I].PauliSigma[CartesianIndex[x_]].PauliXi[I] :>
+	CV[a, i] CV[b, j] CV[V, x]] & // Contract //
+FMCartesianSchoutenBruteForce[#, {V, p1, p2, a, b},
+	FCVerbose -> -1] & // Simplify", "0"}
 });
 
 
@@ -196,7 +217,7 @@ Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID6",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].GA[5].SpinorUD[\
-p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
 Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&",
 "null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
@@ -212,19 +233,22 @@ CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 #+null,Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID8",
 "((FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[CGAD[\
-i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
-"null - ((2*I)*(CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + D]]*PauliXi[-I] . \
-PauliXi[I] - CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + \
-D]]*CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliXi[I] - I*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CartesianIndex[ii, -1 + D], -1 + D] . \
-PauliXi[I]*Eps[CartesianIndex[i, -1 + D], CartesianIndex[ii, -1 + D], CartesianMomentum[p1, \
--1 + D]] - I*PauliXi[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
-PauliXi[I]*Eps[CartesianIndex[i, -1 + D], CartesianMomentum[p1, -1 + D], \
-CartesianMomentum[p2, -1 + D]]))/(Sqrt[m1 + TemporalPair[ExplicitLorentzIndex[0], \
+"null - ((2*I)*(CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*CartesianPair[CartesianIndex[j,
+-1 + D], CartesianMomentum[p1, -1 + D]]*PauliXi[-I] . PauliXi[I] - CartesianPair[CartesianIndex[i,
+-1 + D], CartesianIndex[j, -1 + D]]*CartesianPair[CartesianMomentum[p1, -1 +
+D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . PauliXi[I] -
+I*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1,
+-1 + D]]*PauliXi[-I] . PauliSigma[CartesianIndex[ii, -1 + D],
+-1 + D] . PauliXi[I]*Eps[CartesianIndex[i, -1 + D],
+CartesianIndex[ii, -1 + D], CartesianMomentum[p2, -1 + D]] -
+I*CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j,
+-1 + D]]*PauliXi[-I] . PauliSigma[CartesianIndex[ii, -1 + D],
+-1 + D] . PauliXi[I]*Eps[CartesianIndex[ii, -1 + D],
+CartesianMomentum[p1, -1 + D], CartesianMomentum[p2,
+-1 + D]]))/(Sqrt[m1 + TemporalPair[ExplicitLorentzIndex[0],
 TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID9",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].SpinorVD[p2,m2]]/\
@@ -240,7 +264,7 @@ Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
 //Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID12",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].CGAD[i].SpinorVD[p2,m2]\
-]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
 &//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
 "null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
 D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] \
@@ -260,7 +284,7 @@ Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID15",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[TGA[],\
-CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 //Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
 #+null,Epsilon]&",
 "null + ((2*I)*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
@@ -271,28 +295,52 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalP
 TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID16",
 "(FMSpinorChainExplicit2[SpinorUBarD[p1,m1].TGA[].DiracSigma[CGAD[\
-i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&",
-"null - ((2*I)*(m2*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] \
-- m1*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I] + \
-m1*CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . PauliEta[I] - \
-m2*CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliEta[I] - \
-CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliXi[-I] . \
-PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliEta[I]*TemporalPair[ExplicitLorentzIndex[0], \
-TemporalMomentum[p1]] + CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*PauliXi[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
-PauliEta[I]*TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + CartesianPair[CartesianIndex[j, -1 + D], \
-CartesianMomentum[p1, -1 + D]]*PauliXi[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 \
-+ D] . PauliEta[I]*TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]] - CartesianPair[CartesianIndex[i, \
--1 + D], CartesianIndex[j, -1 + D]]*PauliXi[-I] . PauliSigma[CartesianMomentum[p1, -1 \
-+ D], -1 + D] . PauliEta[I]*TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]))/(Sqrt[m1 \
-+ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[ExplicitLorentzIndex[0], \
-TemporalMomentum[p2]]])"},
+"null + ((2*
+	I)*(-(m2*
+		CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*
+		PauliXi[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliEta[I]) +
+	m1*CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliEta[I] -
+	m1*CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianIndex[j, -1 + D], -1 + D].PauliEta[I] +
+	m2*CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianMomentum[p1, -1 + D], -1 + D].PauliEta[I] +
+	CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliEta[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] -
+	CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianIndex[j, -1 + D], -1 + D].PauliEta[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] -
+	CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliEta[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]] +
+	CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	PauliXi[-I].PauliSigma[
+		CartesianMomentum[p1, -1 + D], -1 + D].PauliEta[I]*
+	TemporalPair[ExplicitLorentzIndex[0],
+		TemporalMomentum[p2]]))/(Sqrt[
+	m1 + TemporalPair[ExplicitLorentzIndex[0],
+	TemporalMomentum[p1]]]*
+	Sqrt[m2 +
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID17",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorVD[p2,m2]]/\
 Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
@@ -317,7 +365,7 @@ Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID22",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].GA[5].SpinorVD[\
-p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
+p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{\
 Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&",
 "null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
@@ -333,20 +381,34 @@ CGAD[i]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 #+null,Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID24",
 "((FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[CGAD[\
-i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+i],CGAD[j]].SpinorVD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True]&//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)/.$MU[_]\[RuleDelayed]ii",
-"null - ((2*I)*(CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + D]]*PauliEta[-I] . \
-PauliEta[I] - CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + \
-D]]*CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] \
-. PauliEta[I] - I*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CartesianIndex[ii, -1 + D], -1 + D] . \
-PauliEta[I]*Eps[CartesianIndex[i, -1 + D], CartesianIndex[ii, -1 + D], CartesianMomentum[p1, \
--1 + D]] - I*PauliEta[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
-PauliEta[I]*Eps[CartesianIndex[i, -1 + D], CartesianMomentum[p1, -1 + D], \
-CartesianMomentum[p2, -1 + D]]))/(Sqrt[m1 + TemporalPair[ExplicitLorentzIndex[0], \
-TemporalMomentum[p1]]]*Sqrt[m2 + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"},
+"null - ((2*
+	I)*(CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*PauliEta[-I].PauliEta[I] -
+	CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	CartesianPair[CartesianMomentum[p1, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*PauliEta[-I].PauliEta[I] -
+	I*CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[ii, -1 + D], -1 + D].PauliEta[I]*
+	Eps[CartesianIndex[i, -1 + D], CartesianIndex[ii, -1 + D],
+		CartesianMomentum[p2, -1 + D]] -
+	I*CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[ii, -1 + D], -1 + D].PauliEta[I]*
+	Eps[CartesianIndex[ii, -1 + D], CartesianMomentum[p1, -1 + D],
+		CartesianMomentum[p2, -1 + D]]))/(Sqrt[
+	m1 + TemporalPair[ExplicitLorentzIndex[0],
+	TemporalMomentum[p1]]]*
+	Sqrt[m2 +
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID25",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].SpinorUD[p2,m2]]/\
 Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
@@ -361,7 +423,7 @@ Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]&\
 //Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID28",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].CGAD[i].SpinorUD[p2,m2]\
-]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
+]/Epsilon)//PauliSimplify[#, PauliReduce -> True] &//FCReplaceD[#,D\[Rule]4-2Epsilon]&//Series[#,{Epsilon,0,0}]\
 &//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,Epsilon]&",
 "null + (2*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
 D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
@@ -381,7 +443,7 @@ Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[#+null,\
 Epsilon]&", "null"},
 {"fcstFMSpinorChainExplicit2Poles-ID31",
 "(FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[TGA[],\
-CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
+CGAD[i]].SpinorUD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True] &//FCReplaceD[#,D\[Rule]4-2Epsilon]&\
 //Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&//SelectFree2[\
 #+null,Epsilon]&",
 "null + ((2*I)*(CartesianPair[CartesianMomentum[p1, -1 + D], CartesianMomentum[p2, -1 + \
@@ -392,28 +454,52 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]]]*Sqrt[m2 + TemporalP
 TemporalMomentum[p2]]])"},
 {"fcstFMSpinorChainExplicit2Poles-ID32",
 "((FMSpinorChainExplicit2[SpinorVBarD[p1,m1].TGA[].DiracSigma[CGAD[\
-i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//FCReplaceD[#,D\[Rule]4-\
+i],CGAD[j]].SpinorUD[p2,m2]]/Epsilon)//PauliSimplify[#, PauliReduce -> True] &//FCReplaceD[#,D\[Rule]4-\
 2Epsilon]&//Series[#,{Epsilon,0,0}]&//Normal//Collect2[#,Epsilon]&\
 //SelectFree2[#+null,Epsilon]&)",
-"null - ((2*I)*(m2*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p1, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] \
-- m1*CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I] + \
-m1*CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . PauliXi[I] - \
-m2*CartesianPair[CartesianIndex[i, -1 + D], CartesianIndex[j, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CartesianMomentum[p1, -1 + D], -1 + D] . PauliXi[I] - \
-CartesianPair[CartesianIndex[j, -1 + D], CartesianMomentum[p2, -1 + D]]*PauliEta[-I] . \
-PauliSigma[CartesianIndex[i, -1 + D], -1 + D] . PauliXi[I]*TemporalPair[ExplicitLorentzIndex[0], \
-TemporalMomentum[p1]] + CartesianPair[CartesianIndex[i, -1 + D], CartesianMomentum[p2, -1 + \
-D]]*PauliEta[-I] . PauliSigma[CartesianIndex[j, -1 + D], -1 + D] . \
-PauliXi[I]*TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + CartesianPair[CartesianIndex[j, -1 + D], \
-CartesianMomentum[p1, -1 + D]]*PauliEta[-I] . PauliSigma[CartesianIndex[i, -1 + D], \
--1 + D] . PauliXi[I]*TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]] - CartesianPair[CartesianIndex[i, \
--1 + D], CartesianIndex[j, -1 + D]]*PauliEta[-I] . PauliSigma[CartesianMomentum[p1, \
--1 + D], -1 + D] . PauliXi[I]*TemporalPair[ExplicitLorentzIndex[0], \
-TemporalMomentum[p2]]))/(Sqrt[m1 + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]]]*Sqrt[m2 + \
-TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"}
+"null + ((2*
+	I)*(-(m2*
+		CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*
+		PauliEta[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliXi[I]) +
+	m1*CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliXi[I] -
+	m1*CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[j, -1 + D], -1 + D].PauliXi[I] +
+	m2*CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianMomentum[p1, -1 + D], -1 + D].PauliXi[I] +
+	CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliXi[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] -
+	CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianMomentum[p2, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[j, -1 + D], -1 + D].PauliXi[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] -
+	CartesianPair[CartesianIndex[j, -1 + D],
+		CartesianMomentum[p1, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianIndex[i, -1 + D], -1 + D].PauliXi[I]*
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]] +
+	CartesianPair[CartesianIndex[i, -1 + D],
+		CartesianIndex[j, -1 + D]]*
+	PauliEta[-I].PauliSigma[
+		CartesianMomentum[p1, -1 + D], -1 + D].PauliXi[I]*
+	TemporalPair[ExplicitLorentzIndex[0],
+		TemporalMomentum[p2]]))/(Sqrt[
+	m1 + TemporalPair[ExplicitLorentzIndex[0],
+	TemporalMomentum[p1]]]*
+	Sqrt[m2 +
+	TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]]])"}
 });
 
 Tests`NRQCD`FMSpinorChainExplicit2DimCheck =
