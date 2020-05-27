@@ -157,7 +157,7 @@ kabs=Eq;
 
 
 amp[2]=amp[1]//DiracSimplify//
-FMSpinorChainExplicit2[#,FMSpinorNormalization->"nonrelativistic"]&;
+FMSpinorChainExplicit2[#,FMNormalization->"nonrelativistic"]&;
 
 
 (* ::Text:: *)

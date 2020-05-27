@@ -264,7 +264,7 @@ prefsRule=Thread[Rule[prefs,prefsExpanded]];
 
 chainFull=FMSpinorChainsExplicit[chains,{p1,QMass},{p2,QMass},
 	FMKinematicsOfHeavyFermions->"TwoBodyLabFrame",
-	FMSpinorNormalization->"nonrelativistic",
+	FMNormalization->"nonrelativistic",
 	FinalSubstitutions->{FCGV["Jacobi QR"]->q,FCGV["Jacobi P"]->P}];
 
 

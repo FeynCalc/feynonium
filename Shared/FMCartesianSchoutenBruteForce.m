@@ -23,13 +23,13 @@ Begin["`FMCartesianSchoutenBruteForce`Private`"]
 fmcsbv::usage="";
 
 Options[FMCartesianSchoutenBruteForce] = {
-	FCI -> False,
-	Expand -> True,
-	Collect -> True,
+	Collect 	-> True,
 	EpsEvaluate -> True,
-	Head -> None,
-	Factoring -> Identity,
-	FCVerbose -> 0
+	Expand 		-> True,
+	FCI 		-> False,
+	FCVerbose	-> 0,
+	Factoring	-> Identity,
+	Head 		-> None
 };
 
 checkSchouten[x_, repRule_]:=

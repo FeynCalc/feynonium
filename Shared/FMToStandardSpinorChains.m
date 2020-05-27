@@ -25,8 +25,8 @@ Begin["`FMToFMStandardSpinorChains`Private`"]
 dsHead::usage="";
 
 Options[FMToStandardSpinorChains] = {
-	DiracGammaCombine -> True,
-	FCI -> False
+	DiracGammaCombine	-> True,
+	FCI 				-> False
 };
 
 FMToStandardSpinorChains[expr_List, opts:OptionsPattern[]] :=

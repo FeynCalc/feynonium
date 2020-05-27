@@ -63,7 +63,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])^2*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID5",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 "(DiracTrace[(-m + DiracGamma[Momentum[p2, D], D]) . DiracGamma[5] \
 . (DiracGamma[Momentum[p1 + p2, D], D] + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + \
@@ -76,7 +76,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID6",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 	"-(DiracTrace[(-m + DiracGamma[Momentum[p2, D], D]) . \
 DiracGamma[LorentzIndex[Lor1, D], D] . (DiracGamma[Momentum[p1 + p2, \
 D], D] + TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + \
@@ -89,7 +89,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID7",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 	"(DiracTrace[(-m + DiracGamma[Momentum[p2, D], D]) . \
 DiracGamma[5] . (DiracGamma[Momentum[p1 + p2, D], D] + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p1]] + \
@@ -101,7 +101,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID8",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\"]",
 "-(DiracTrace[(-m + DiracGamma[Momentum[p2, D], D]) . \
 DiracGamma[LorentzIndex[Lor1, D], D] . (DiracGamma[Momentum[p1 + p2, \
@@ -164,7 +164,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])^2*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID13",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 "(DiracTrace[(m + DiracGamma[Momentum[p1, D], D]) . \
 (DiracGamma[Momentum[p1 + p2, D], D] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -177,7 +177,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID14",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 	"-(DiracTrace[(m + DiracGamma[Momentum[p1, D], D]) . \
 (DiracGamma[Momentum[p1 + p2, D], D] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -190,7 +190,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID15",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]",
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\"]",
 	"(DiracTrace[(m + DiracGamma[Momentum[p1, D], D]) . \
 (DiracGamma[Momentum[p1 + p2, D], D] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -202,7 +202,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID16",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\"]",
 "-(DiracTrace[(m + DiracGamma[Momentum[p1, D], D]) . \
 (DiracGamma[Momentum[p1 + p2, D], D] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -265,7 +265,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])^2*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID21",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "(DiracTrace[(-m + DiracGamma[Momentum[p2]]) . DiracGamma[5] . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -279,7 +279,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID22",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "-(DiracTrace[(-m + DiracGamma[Momentum[p2]]) . \
 DiracGamma[LorentzIndex[Lor1]] . (DiracGamma[Momentum[p1 + p2]] + \
@@ -293,7 +293,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID23",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "(DiracTrace[(-m + DiracGamma[Momentum[p2]]) . DiracGamma[5] . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -306,7 +306,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID24",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\",Dimension\[Rule]4]",
 "-(DiracTrace[(-m + DiracGamma[Momentum[p2]]) . \
 DiracGamma[LorentzIndex[Lor1]] . (DiracGamma[Momentum[p1 + p2]] + \
@@ -369,7 +369,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])^2*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID29",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "(DiracTrace[(m + DiracGamma[Momentum[p1]]) . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -383,7 +383,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID30",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "-(DiracTrace[(m + DiracGamma[Momentum[p1]]) . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -397,7 +397,7 @@ TemporalMomentum[p1]] + TemporalPair[ExplicitLorentzIndex[0], \
 TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID31",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]",
 "(DiracTrace[(m + DiracGamma[Momentum[p1]]) . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -410,7 +410,7 @@ TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])*(m + \
 TemporalPair[ExplicitLorentzIndex[0], TemporalMomentum[p2]])/2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID32",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\",Dimension\[Rule]4]",
 "-(DiracTrace[(m + DiracGamma[Momentum[p1]]) . \
 (DiracGamma[Momentum[p1 + p2]] + TemporalPair[ExplicitLorentzIndex[0], \
@@ -432,7 +432,7 @@ TemporalMomentum[p2]])^2)"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID34",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
 p2,m},{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\"]",
+FMNormalization\[Rule]\"relativistic\"]",
 "(DiracTrace[(-m + DiracGamma[Momentum[p2, D], D]) . DiracGamma[5] \
 . (m + DiracGamma[Momentum[p1, D], D])]*SUNFDelta[SUNFIndex[col1], \
 SUNFIndex[col2]])/(Sqrt[2]*Sqrt[SUNN]*(TemporalPair[ExplicitLorentzIndex[0], \
@@ -450,7 +450,7 @@ TemporalMomentum[p2]])^2)"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID36",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
 p2,m},{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]",
+FMNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]",
 "(DiracTrace[(-m + DiracGamma[Momentum[p2]]) . DiracGamma[5] . (m \
 + DiracGamma[Momentum[p1]])]*SUNFDelta[SUNFIndex[col1], \
 SUNFIndex[col2]])/(Sqrt[2]*Sqrt[SUNN]*(TemporalPair[ExplicitLorentzIndex[0], \
@@ -471,7 +471,7 @@ TemporalMomentum[p2]])^2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID38",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
 p2,m},Lor1,{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\"]",
+FMNormalization\[Rule]\"relativistic\"]",
 "-((DiracTrace[(m + DiracGamma[Momentum[p1, D], D]) . \
 (DiracGamma[LorentzIndex[Lor1, D], D] - Pair[LorentzIndex[Lor1, D], \
 Momentum[p1 - p2, D]]/(2*(m + (TemporalPair[ExplicitLorentzIndex[0], \
@@ -497,7 +497,7 @@ TemporalMomentum[p2]])^2))"},
 {"fcstFMInsertCovariantProjectorDefinitions-ID40",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
 p2,m},Lor1,{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]",
+FMNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]",
 "-((DiracTrace[(m + DiracGamma[Momentum[p1]]) . \
 (DiracGamma[LorentzIndex[Lor1]] - Pair[LorentzIndex[Lor1], \
 Momentum[p1 - p2]]/(2*(m + (TemporalPair[ExplicitLorentzIndex[0], \
@@ -537,11 +537,11 @@ m*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]])*SUNTF[{acol}, col1, \
 col2])/EN^2)"},
 {"fcstFMInsertCovariantProjectorTraces-ID5",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID6",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr",
 "-((Sqrt[2]*(-(m*Pair[LorentzIndex[Lor1, D], Momentum[p1, D]]) + \
 2*EN*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]] - \
@@ -549,11 +549,11 @@ m*Pair[LorentzIndex[Lor1, D], Momentum[p2, \
 D]])*SUNFDelta[SUNFIndex[col1], SUNFIndex[col2]])/(EN*Sqrt[SUNN]))"},
 {"fcstFMInsertCovariantProjectorTraces-ID7",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID8",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\"]/.DiracTrace\[Rule]Tr",
 "(-2*(-(m*Pair[LorentzIndex[Lor1, D], Momentum[p1, D]]) + \
 2*EN*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]] - \
@@ -582,11 +582,11 @@ m*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]])*SUNTF[{acol}, col1, \
 col2])/EN^2)"},
 {"fcstFMInsertCovariantProjectorTraces-ID13",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID14",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr",
 "-((Sqrt[2]*(-(m*Pair[LorentzIndex[Lor1, D], Momentum[p1, D]]) + \
 2*EN*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]] - \
@@ -594,11 +594,11 @@ m*Pair[LorentzIndex[Lor1, D], Momentum[p2, \
 D]])*SUNFDelta[SUNFIndex[col1], SUNFIndex[col2]])/(EN*Sqrt[SUNN]))"},
 {"fcstFMInsertCovariantProjectorTraces-ID15",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"]\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\"]\
 /.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID16",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\"]/.DiracTrace\[Rule]Tr",
 "(-2*(-(m*Pair[LorentzIndex[Lor1, D], Momentum[p1, D]]) + \
 2*EN*Pair[LorentzIndex[Lor1, D], Momentum[p2, D]] - \
@@ -627,11 +627,11 @@ m*Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNTF[{acol}, col1, \
 col2])/EN^2)"},
 {"fcstFMInsertCovariantProjectorTraces-ID21",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID22",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr",
 "-((Sqrt[2]*(-(m*Pair[LorentzIndex[Lor1], Momentum[p1]]) + \
 2*EN*Pair[LorentzIndex[Lor1], Momentum[p2]] - \
@@ -639,11 +639,11 @@ m*Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNFDelta[SUNFIndex[col1], \
 SUNFIndex[col2]])/(EN*Sqrt[SUNN]))"},
 {"fcstFMInsertCovariantProjectorTraces-ID23",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID24",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
-p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\",Dimension\[Rule]4]/.DiracTrace\[Rule]Tr",
 "(-2*(-(m*Pair[LorentzIndex[Lor1], Momentum[p1]]) + \
 2*EN*Pair[LorentzIndex[Lor1], Momentum[p2]] - \
@@ -672,11 +672,11 @@ m*Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNTF[{acol}, col1, \
 col2])/EN^2)"},
 {"fcstFMInsertCovariantProjectorTraces-ID29",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID30",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr",
 "-((Sqrt[2]*(-(m*Pair[LorentzIndex[Lor1], Momentum[p1]]) + \
 2*EN*Pair[LorentzIndex[Lor1], Momentum[p2]] - \
@@ -684,11 +684,11 @@ m*Pair[LorentzIndex[Lor1], Momentum[p2]])*SUNFDelta[SUNFIndex[col1], \
 SUNFIndex[col2]])/(EN*Sqrt[SUNN]))"},
 {"fcstFMInsertCovariantProjectorTraces-ID31",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
-p2,m},{acol,col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+p2,m},{acol,col1,col2},FMNormalization\[Rule]\"relativistic\",\
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID32",
 "res=FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,\
-m},{p2,m},Lor1,{acol,col1,col2},FMSpinorNormalization\[Rule]\"\
+m},{p2,m},Lor1,{acol,col1,col2},FMNormalization\[Rule]\"\
 relativistic\",Dimension\[Rule]4]/.DiracTrace\[Rule]Tr; \
 FCClearScalarProducts[]; FCSetDiracGammaScheme[\"NDR\"]; \n res",
 "(-2*(-(m*Pair[LorentzIndex[Lor1], Momentum[p1]]) + \
@@ -705,7 +705,7 @@ m},{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True]\
 {"fcstFMInsertCovariantProjectorTraces-ID34",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
 p2,m},{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\"]/.DiracTrace\[Rule]Tr",
+FMNormalization\[Rule]\"relativistic\"]/.DiracTrace\[Rule]Tr",
 "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID35",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
@@ -714,7 +714,7 @@ Dimension\[Rule]4]/.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID36",
 "FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{\
 p2,m},{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]\
+FMNormalization\[Rule]\"relativistic\",Dimension\[Rule]4]\
 /.DiracTrace\[Rule]Tr", "0"},
 {"fcstFMInsertCovariantProjectorTraces-ID37",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
@@ -727,7 +727,7 @@ SUNFIndex[col2]])/(Sqrt[2]*EN*Sqrt[SUNN])"},
 {"fcstFMInsertCovariantProjectorTraces-ID38",
 "FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,m},{\
 p2,m},Lor1,{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]True,\
-FMSpinorNormalization\[Rule]\"relativistic\"]/.DiracTrace\[Rule]Tr",
+FMNormalization\[Rule]\"relativistic\"]/.DiracTrace\[Rule]Tr",
 "(Sqrt[2]*(Pair[LorentzIndex[Lor1, D], Momentum[p1, D]] - \
 Pair[LorentzIndex[Lor1, D], Momentum[p2, \
 D]])*SUNFDelta[SUNFIndex[col1], SUNFIndex[col2]])/Sqrt[SUNN]"},
@@ -741,7 +741,7 @@ SUNFIndex[col2]])/(Sqrt[2]*EN*Sqrt[SUNN])"},
 {"fcstFMInsertCovariantProjectorTraces-ID40",
 "res=FMInsertCovariantProjector[SpinorVBar[p2,m].SpinorU[p1,m],{p1,\
 m},{p2,m},Lor1,{col1,col2},FMUseSimplifiedCovariantProjectors\[Rule]\
-True,FMSpinorNormalization\[Rule]\"relativistic\",
+True,FMNormalization\[Rule]\"relativistic\",
 Dimension\[Rule]4]/.DiracTrace\[Rule]Tr; FCClearScalarProducts[]; \
 FCSetDiracGammaScheme[\"NDR\"]; \n res",
 "(Sqrt[2]*(Pair[LorentzIndex[Lor1], Momentum[p1]] - \
@@ -757,35 +757,35 @@ ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](ChangeDimension[\
 FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,\
-m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\"] \
+m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\"] \
 .TGA[].FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMSpinorNormalization\
+SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMNormalization\
 \[Rule]\"relativistic\"].TGA[],4]/.DiracTrace\[Rule]Identity)]/.{FCI@\
 SP[pvcc,pv]\[Rule]-1,FCI@SP[p1,pv]\[Rule]-FCI@SP[p2,pv],FCI@SP[p1,\
 pvcc]\[Rule]-FCI@SP[p2,pvcc]}]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID2",
 "Factor[Tr[(ChangeDimension[FMInsertCovariantProjector[SpinorUBar[\
-p1,m].SpinorV[p2,m],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\
+p1,m].SpinorV[p2,m],{p1,m},{p2,m},{col1,col2},FMNormalization\
 \[Rule]\"relativistic\"] \
 .TGA[].(FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\
+SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\
 \"relativistic\"]/.{DiracGamma[5]\[Rule]-DiracGamma[5]}).TGA[],4]\
 /.DiracTrace\[Rule]Identity)]]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID3",
 "Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](FMInsertCovariantProjector[\
 SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,m},Lor1,{col1,col2},\
-FMSpinorNormalization\[Rule]\"relativistic\"] \
+FMNormalization\[Rule]\"relativistic\"] \
 .TGA[].FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMSpinorNormalization\
+SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMNormalization\
 \[Rule]\"relativistic\"].TGA[]/.DiracTrace\[Rule]Identity)]/.{FCI@SP[\
 pvcc,pv]\[Rule]-1,FCI@SP[p1,pv]\[Rule]-FCI@SP[p2,pv],FCI@SP[p1,pvcc]\
 \[Rule]-FCI@SP[p2,pvcc]}]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID4",
 "Factor[Tr[(FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,\
-m],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"\
+m],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\"\
 relativistic\"] \
 .TGA[].(FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\
+SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\
 \"relativistic\"]/.{DiracGamma[5]\[Rule]-DiracGamma[5]}).TGA[]\
 /.DiracTrace\[Rule]Identity)]]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID5",
@@ -823,40 +823,40 @@ ScalarProduct[p1,p1]=m^2; ScalarProduct[p2,p2]=m^2; \
 ScalarProduct[p1,p2]=2EN^2-m^2; Momentum[p1|p2,D-4]=0; \
 Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](ChangeDimension[\
 FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,\
-m},Lor1,{col1,col2},FMSpinorNormalization\[Rule]\"relativistic\",\
+m},Lor1,{col1,col2},FMNormalization\[Rule]\"relativistic\",\
 FMUseSimplifiedCovariantProjectors\[Rule]True] \
 .TGA[].FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMSpinorNormalization\
+SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMNormalization\
 \[Rule]\"relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True]\
 .TGA[],4]/.DiracTrace\[Rule]Identity)]/.{FCI@SP[pvcc,pv]\[Rule]-1,FCI@\
 SP[p1,pv]\[Rule]-FCI@SP[p2,pv],FCI@SP[p1,pvcc]\[Rule]-FCI@SP[p2,pvcc]}\
 ]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID10",
 "Factor[Tr[(ChangeDimension[FMInsertCovariantProjector[SpinorUBar[\
-p1,m].SpinorV[p2,m],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\
+p1,m].SpinorV[p2,m],{p1,m},{p2,m},{col1,col2},FMNormalization\
 \[Rule]\"relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True]\
 .TGA[].(FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\
+SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\
 \"relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True]/.{\
 DiracGamma[5]\[Rule]-DiracGamma[5]}).TGA[],4]/.DiracTrace\[Rule]\
 Identity)]]", "4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID11",
 "Factor[Tr[FV[pv,Lor1]FV[pvcc,Lor2](FMInsertCovariantProjector[\
 SpinorUBar[p1,m].SpinorV[p2,m],{p1,m},{p2,m},Lor1,{col1,col2},\
-FMSpinorNormalization\[Rule]\"relativistic\",\
+FMNormalization\[Rule]\"relativistic\",\
 FMUseSimplifiedCovariantProjectors\[Rule]True] \
 .TGA[].FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMSpinorNormalization\
+SpinorV[p2,m]],{p1,m},{p2,m},Lor2,{col1,col2},FMNormalization\
 \[Rule]\"relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True]\
 .TGA[]/.DiracTrace\[Rule]Identity)]/.{FCI@SP[pvcc,pv]\[Rule]-1,FCI@SP[\
 p1,pv]\[Rule]-FCI@SP[p2,pv],FCI@SP[p1,pvcc]\[Rule]-FCI@SP[p2,pvcc]}]",
 	"4*EN^2"},
 {"fcstFMInsertCovariantProjectorNormalization-ID12",
 "Factor[Tr[(FMInsertCovariantProjector[SpinorUBar[p1,m].SpinorV[p2,\
-m],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\"\
+m],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\"\
 relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True] \
 .TGA[].(FMInsertCovariantProjector[ComplexConjugate[SpinorUBar[p1,m].\
-SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMSpinorNormalization\[Rule]\
+SpinorV[p2,m]],{p1,m},{p2,m},{col1,col2},FMNormalization\[Rule]\
 \"relativistic\",FMUseSimplifiedCovariantProjectors\[Rule]True]/.{\
 DiracGamma[5]\[Rule]-DiracGamma[5]}).TGA[]/.DiracTrace\[Rule]Identity)\
 ]]", "4*EN^2"},

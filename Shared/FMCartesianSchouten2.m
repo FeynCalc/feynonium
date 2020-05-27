@@ -24,10 +24,10 @@ End[]
 Begin["`FMCartesianSchouten2`Private`"]
 
 Options[FMCartesianSchouten2] = {
-	FCI -> False,
-	Expand -> True,
-	Collect -> True,
-	Head -> None
+	FCI		-> False,
+	Expand	-> True,
+	Collect	-> True,
+	Head	-> None
 };
 
 FMCartesianSchouten2[expr_, {a1_,b1_,a2_,b2_,a3_,b3_,a4_,a5_}, OptionsPattern[]] :=

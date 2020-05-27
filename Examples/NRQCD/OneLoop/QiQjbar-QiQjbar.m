@@ -164,7 +164,7 @@ Isolate->False]&//DiracSimplify;
 
 
 amp[2]=FMSpinorChainExplicit2[amp[1],
-	FMSpinorNormalization->"nonrelativistic"]//Contract//
+	FMNormalization->"nonrelativistic"]//Contract//
 	PauliSimplify[#,PauliReduce->True]&//Contract[#,EpsContract->False]&//
 	ExpandScalarProduct;
 

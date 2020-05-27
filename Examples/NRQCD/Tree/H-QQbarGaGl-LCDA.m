@@ -361,7 +361,7 @@ prefsExpanded=Collect2[#,SoftScale,LorentzIndex,CartesianIndex,Eps,DOT,
 
 chainFull=FMSpinorChainsExplicit[chains,{p1,QMass},{p2,QMass},
 	FMKinematicsOfHeavyFermions->"ThreeBodyLabFrame",
-	FMSpinorNormalization->"nonrelativistic",
+	FMNormalization->"nonrelativistic",
 	FinalSubstitutions->{FCGV["Jacobi Q1R"]->q1,FCGV["Jacobi Q2R"]->q2,
 	FCGV["Jacobi P"]->P,FCGV["m3"]->0}];
 

@@ -13,7 +13,9 @@
 
 
 FMSpinorChainExplicit2::usage =
-"";
+"FMSpinorChainsExplicit[exp] rewrites all Dirac spinor chains present in the \
+expression in terms of Pauli matrices and spinors. The energies and momenta \
+appearing inside the spinors remain unchanged. ";
 
 FMSpinorChainExplicit2::failmsg =
 "Error! FMSpinorChainsExplicit has encountered a fatal problem and must abort the computation. \
@@ -32,16 +34,16 @@ ind::usage="";
 sce2Verbose::usage="";
 
 Options[FMSpinorChainExplicit2] = {
-	Contract -> True,
-	DiracGammaCombine -> True,
-	DotSimplify -> True,
-	EpsEvaluate -> True,
-	FCI -> False,
-	FCVerbose -> False,
-	FMSpinorNormalization -> "relativistic",
-	PauliTrick -> True,
-	PowerExpand ->True,
-	Collect -> True
+	Collecting 			-> True,
+	Contract 			-> True,
+	DiracGammaCombine	-> True,
+	DotSimplify			-> True,
+	EpsEvaluate			-> True,
+	FCI					-> False,
+	FCVerbose			-> False,
+	FMNormalization		-> "relativistic",
+	PauliTrick			-> True,
+	PowerExpand			-> True
 };
 
 FMSpinorChainExplicit2[expr_List, opts:OptionsPattern[]] :=
@@ -94,7 +96,7 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 		];
 
 		Switch[
-			OptionValue[FMSpinorNormalization],
+			OptionValue[FMNormalization],
 			"nonrelativistic",
 				normRule  = {(n1|n2)[p_,m_] :> Sqrt[(TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p]]+ m)/(2 TemporalPair[ExplicitLorentzIndex[0],TemporalMomentum[p]])] },
 			"relativistic",
@@ -148,7 +150,7 @@ FMSpinorChainExplicit2[expr_, OptionsPattern[]]:=
 			FCPrint[1, "FMSpinorChainsExplicit2: Done applying PowerExpand, timing: ",  N[AbsoluteTime[] - time, 4], FCDoControl->sce2Verbose]
 		];
 
-		If[	OptionValue[Collect],
+		If[	OptionValue[Collecting],
 			time = AbsoluteTime[];
 			FCPrint[1, "FMSpinorChainsExplicit2: Applying Collect.", FCDoControl->sce2Verbose];
 			res = res/. dsHead[x_]:> dsHead[Collect2[x,{PauliXi,PauliEta}]];

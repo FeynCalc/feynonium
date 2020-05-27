@@ -22,12 +22,12 @@ End[]
 Begin["`FMCartesianSchoutenBruteForce2`Private`"]
 
 Options[FMCartesianSchoutenBruteForce2] = {
-	FCI -> False,
-	Expand -> True,
-	Collect -> True,
-	Head -> None,
-	AllowZeroGain -> False,
-	Except ->{}
+	FCI 			-> False,
+	Expand			-> True,
+	Collect			-> True,
+	Head			-> None,
+	AllowZeroGain	-> False,
+	Except			-> {}
 };
 
 checkSchouten[x_, repRule_]:=

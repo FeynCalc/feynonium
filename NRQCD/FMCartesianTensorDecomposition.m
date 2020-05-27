@@ -34,12 +34,12 @@ tensorProjRule1::usage="";
 tensorProjRule2::usage="";
 
 Options[FMCartesianTensorDecomposition] = {
-	Contract -> True,
-	FCE -> False,
-	FCI -> False,
-	FCVerbose -> False,
-	Factoring -> Factor,
-	Collecting -> True
+	Collecting	-> True,
+	Contract	-> True,
+	FCE			-> False,
+	FCI			-> False,
+	FCVerbose	-> False,
+	Factoring	-> Factor
 };
 
 FMCartesianTensorDecomposition[expr_List, rest__] :=

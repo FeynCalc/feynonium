@@ -52,12 +52,12 @@ optFCE::usage="";
 optSimplifiedProjectors::usage="";
 
 Options[FMInsertCovariantProjector] = {
-	Dimension -> D,
-	FCE -> False,
-	FCI -> False,
-	FCVerbose -> False,
-	FMSpinorNormalization -> "nonrelativistic",
-	FMUseSimplifiedCovariantProjectors -> False
+	Dimension							-> D,
+	FCE									-> False,
+	FCI									-> False,
+	FCVerbose							-> False,
+	FMNormalization						-> "nonrelativistic",
+	FMUseSimplifiedCovariantProjectors	-> False
 };
 
 FMInsertCovariantProjector[0, {_, _}, {_, _}, ___]:=
@@ -68,7 +68,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}/; !OptionQ[{p2,m}], {colF
 	Block[{},
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
-				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
+				OptionValue[FMNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
 		covariantProjector[expr, {p1, m}, {p2, m}, 5, {colFu1, colFu2}]/; expr=!=0;
 	];
 
@@ -77,7 +77,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol/; !Optio
 	Block[{},
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
-				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
+				OptionValue[FMNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
 		covariantProjector[expr, {p1, m}, {p2, m}, lorIndex, {colFu1, colFu2}]
 	]/; expr=!=0;
 
@@ -86,7 +86,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, {colAdj_, colFu1_, colFu
 	Block[{},
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
-				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
+				OptionValue[FMNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
 		If[	optSimplifiedProjectors,
 			Message[FMInsertCovariantProjector::failmsg,"Simplified covariant projectors cannot be used to extract color octet contributions."];
 			Abort[]
@@ -99,7 +99,7 @@ FMInsertCovariantProjector[expr_, {p1_, m_}, {p2_, m_}, lorIndex_Symbol, {colAdj
 	Block[{},
 		{optDim, optFCE, optFCI, cpjVerbose, optSpinorNorm, optSimplifiedProjectors} =
 			{OptionValue[Dimension],OptionValue[FCE],OptionValue[FCI], OptionValue[FCVerbose],
-				OptionValue[FMSpinorNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
+				OptionValue[FMNormalization], OptionValue[FMUseSimplifiedCovariantProjectors]};
 		If[	optSimplifiedProjectors,
 			Message[FMInsertCovariantProjector::failmsg,"Simplified covariant projectors cannot be used to extract color octet contributions."];
 			Abort[]
