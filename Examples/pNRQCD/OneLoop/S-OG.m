@@ -62,7 +62,7 @@ cp]FMCoulombGaugeGluonPropagator[k,{i,c},{j,e}]
 FMCoulombGaugeGluonPropagator[p-k,{0,bp},{0,g}]
 GluonVertex[{k,CartesianIndex[j,D-1],e},{p-k,0,g},{-p,0,f}]
 ) + (
-FMOctetGluonGluonSingletVertex[{"V_A",r},ap,{-(p-k),i,b},{-k,0,c}]
+FMOctetGluonGluonSingletVertex[{"V_A",r},ap,{-k,i,c},{-(p-k),0,b}]
 FMCoulombGaugeGluonPropagator[k,{i,c},{j,e}]
 FMCoulombGaugeGluonPropagator[p-k,{0,b},{0,g}]
 GluonVertex[{k,CartesianIndex[j,D-1],e},{p-k,0,g},{-p,0,f}]
@@ -80,7 +80,7 @@ FMCoulombGaugeGluonPropagator[k,{i,c},{j,e}]
 FMCoulombGaugeGluonPropagator[p-k,{0,bp},{0,g}]
 GluonVertex[{k,CartesianIndex[j,D-1],e},{p-k,0,g},{-p,0,f}]
 ) + (
-FMOctetGluonGluonOctetVertex[{"V_B",r},ap,{-(p-k),i,b},{-k,0,c},u]
+FMOctetGluonGluonOctetVertex[{"V_B",r},ap,{-k,i,c},{-(p-k),0,b},u]
 FMCoulombGaugeGluonPropagator[k,{i,c},{j,e}]
 FMCoulombGaugeGluonPropagator[p-k,{0,b},{0,g}]
 GluonVertex[{k,CartesianIndex[j,D-1],e},{p-k,0,g},{-p,0,f}]
@@ -201,17 +201,21 @@ resRunningVB=(SelectNotFree2[amp[7],SMP["V_B"]]/ampLoVB)/.SMP["g_s"]^2->4Pi SMP[
 resRunningVA=SelectNotFree2[amp[7],SMP["V_A"]]/ampLoVA/.SMP["g_s"]^2->4Pi SMP["alpha_s"]
 
 
-resFinalVA=(mu D[resRunningVA,mu])//SUNSimplify
-resFinalVB=(mu D[resRunningVB,mu])//SUNSimplify
+(* ::Text:: *)
+(*In this case the a_s corrections obviously vanish at 1-loop*)
+
+
+resFinalVA=(mu D[resRunningVA,mu])
+resFinalVB=(mu D[resRunningVB,mu])
 
 
 (* ::Section:: *)
 (*Check the final results*)
 
 
-knownResults = {(8*CA*SMP["alpha_s"])/(3*Pi),(8*CA*SMP["alpha_s"])/(3*Pi)};
+knownResults = {0,0};
 FCCompareResults[{resFinalVA,resFinalVB},knownResults,
-Text->{"\tCompare to hep-ph/9907240, Table 1:",
+Text->{"\tCompare to hep-ph/0007197, Eq. 11:",
 "CORRECT.","WRONG!"}, Interrupt->{Hold[Quit[1]],Automatic}];
 Print["\tCPU Time used: ", Round[N[TimeUsed[],4],0.001], " s."];
 
