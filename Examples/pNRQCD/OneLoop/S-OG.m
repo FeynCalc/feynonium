@@ -32,7 +32,7 @@ If[ $Notebooks === False,
 $LoadAddOns={"FeynOnium"};
 <<FeynCalc`
 
-FCCheckVersion[9,4,0];
+FCCheckVersion[9,3,1];
 
 
 (* ::Section:: *)

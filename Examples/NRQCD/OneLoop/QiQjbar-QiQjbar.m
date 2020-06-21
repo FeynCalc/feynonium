@@ -32,7 +32,7 @@ $LoadAddOns={"FeynArts", "FeynOnium","FeynHelpers"};
 <<FeynCalc`
 $FAVerbose = 0;
 
-FCCheckVersion[9,4,0];
+FCCheckVersion[9,3,1];
 
 
 (* ::Section:: *)
