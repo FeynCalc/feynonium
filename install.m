@@ -150,7 +150,7 @@ Print[" \[Bullet] If you are already using the development version of FeynCalc y
 Options[InstallFeynOnium] = {
 	AutoOverwriteFeynOniumDirectory		->	None,
 	FeynOniumDevelopmentVersionLink		->	"https://github.com/FeynCalc/feynonium/archive/master.zip",
-	FeynOniumStableVersionLink			->	"https://github.com/FeynCalc/feynonium/archive/master.zip",
+	FeynOniumStableVersionLink			->	"https://github.com/FeynCalc/feynonium/archive/stable.zip",
 	InstallFeynOniumDevelopmentVersion	->	False,
 	InstallFeynOniumTo					->	FileNameJoin[{$FeynCalcDirectory, "AddOns","FeynOnium"}]
 };

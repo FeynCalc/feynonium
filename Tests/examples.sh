@@ -3,17 +3,78 @@
 # This software is covered by the GNU General Public License 3.
 # Copyright (C) 2015-2020 Vladyslav Shtabovenko
 
-# This small bash script provides a nice way to check that
-# FeynOnium is working properly using real-life examples.
+# Description:
+
+# Checks FeynOnium using real-life calculations.
+
+# Stop if any of the examples fails
+set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-if [ -z ${MATH+x} ]; then MATH=math; else echo $MATH; fi
+
+
+MATH=$1
+
+#QED Examples
+#-------------------------------------------------------------------------------
+for exFile in 'ElAel-ElAel-CoulombPotential.m ElEl-ElEl-CoulombPotential.m'
+
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/QED/Tree/$exFile
+done
+
+for exFile in 'GaGa-GaGa.m'
+
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/QED/OneLoop/$exFile
+done
 
 #NRQCD Examples
-$MATH -nopromt -script ../Examples/NRQCD/NRQCD-QQbarToTwoPhotons-Tree.m
-$MATH -nopromt -script ../Examples/NRQCD/NRQCD-QQbarToThreePhotons-Tree.m
-$MATH -nopromt -script ../Examples/NRQCD/NRQCD-QQbarPrimeToQQbarPrime-OneLoop.m
+#-------------------------------------------------------------------------------
+for exFile in 'QQbar-GlGl.m H-QQbarGaGl-LCDA.m \
+H-QQbarGa-LCDA.m QQbar-GaGa.m QQbar-GaGaGa.m'
 
-notify-send "Finished running examples for FeynOnium."
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/NRQCD/Tree/$exFile
+done
+
+for exFile in 'QiQjbar-QiQjbar.m'
+
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/NRQCD/Tree/$exFile
+done
+
+#pNRQCD Examples
+#-------------------------------------------------------------------------------
+for exFile in 'S-OG.m'
+
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/pNRQCD/OneLoop/$exFile
+done
+
+#BChPT Examples
+#-------------------------------------------------------------------------------
+for exFile in 'N-N.m'
+
+do
+  echo
+  echo -e "* \c"
+  $MATH -nopromt -script ../Examples/BChPT/OneLoop/$exFile
+done
+
+#-------------------------------------------------------------------------------
+
+
+notify-send --urgency=low -i "$([ $? = 0 ] && echo sunny || echo error)" "Finished running examples for FeynCalc."

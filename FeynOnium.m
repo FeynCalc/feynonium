@@ -52,7 +52,7 @@ If[ $FeynCalcStartupMessages =!= False,
 							SystemOpen[FileNameJoin[{$FeynOniumDirectory, "Examples"}]],
 							Evaluator -> Automatic, Method -> "Preemptive"], "Text"],
 	Style[" If you use FeynOnium in your research, please cite","Text"]];
-	Print [Style[" \[Bullet] N. Brambilla, H. S. Chung,  V. Shtabovenko and A. Vairo, TUM-EFT 92/17, in preparation","Text"]];
+	Print [Style[" \[Bullet] N. Brambilla, H. S. Chung,  V. Shtabovenko and A. Vairo, TUM-EFT 92/17, TTP19-021, in preparaion.","Text"]];
 ];
 
 End[]
