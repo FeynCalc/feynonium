@@ -20,7 +20,7 @@ FeynOnium is designed as an add-on for FeynCalc. To use it you need at least Fey
 
 	```
 	Import["https://raw.githubusercontent.com/FeynCalc/feynonium/master/install.m"]
-	InstallFeynOnium[InstallFeynOniumDevelopmentVersion -> True]
+	InstallFeynOnium[]
 	```
 
 If the above code fails with `URLFetch::invhttp: SSL connect error` (e.g. on Mathematica 9 under OS X), try
