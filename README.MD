@@ -18,7 +18,7 @@ FeynOnium is designed as an add-on for FeynCalc. To use it you need at least Fey
 
 	```
 	Import["https://raw.githubusercontent.com/FeynCalc/feynonium/master/install.m"]
-	InstallFeynOnium[InstallFeynOniumDevelopmentVersion -> True]
+	InstallFeynOnium[]
 	```
 
 ## Manual installation
