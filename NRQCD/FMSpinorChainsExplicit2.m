@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2020 Vladyslav Shtabovenko
+	Copyright (C) 2015-2021 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Identifies standard 4D spinor chains to						*)
@@ -183,7 +183,13 @@ diracGammaRules = {
 					{-coeff FeynCalc`Package`MetricS Pair[x,ind] PauliSigma[ind,cDimSelect[dim]], -coeff  FeynCalc`Package`MetricT Pair[x,ExplicitLorentzIndex[0]]+cc}},z2]
 	),
 	dotHold[z1___, coeff_. DiracGamma[5] + cc_:0, z2___]/;NonCommFreeQ[{coeff,cc}]:>
-		dotHold[z1,{ {0, 1}, {1, 0}},z2]
+		dotHold[z1,coeff { {0, 1}, {1, 0}} + cc,z2],
+
+	dotHold[z1___, coeff_. DiracGamma[6] + cc_:0, z2___]/;NonCommFreeQ[{coeff,cc}]:>
+		dotHold[z1, 1/2 coeff { {1, 1}, {1, 1}} + cc,z2],
+
+	dotHold[z1___, coeff_. DiracGamma[7] + cc_:0, z2___]/;NonCommFreeQ[{coeff,cc}]:>
+		dotHold[z1, 1/2 coeff { {1, -1}, {-1, 1}} + cc,z2]
 };
 
 cDimSelect[d_Symbol]:=

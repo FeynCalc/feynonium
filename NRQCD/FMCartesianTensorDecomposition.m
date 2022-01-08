@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2020 Vladyslav Shtabovenko
+	Copyright (C) 2015-2021 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Projects different J values out of Cartesian tensors		*)
@@ -16,8 +16,12 @@ FMCartesianTensorDecomposition::usage =
 "FMCartesianTensorDecomposition[expr, {v1,v2,...}, J] projects our angular
 momenta J out of tensors that are built from the vectors v1, v2, ... .";
 
+FMCartesianTensorDecomposition::novecs =
+"Warning! The given expression does not depend on any of the provided vectors. \
+Please recheck your input. Returning the unevaluated expression."
+
 FMCartesianTensorDecomposition::failmsg =
-"Error! Uncontract has encountered a fatal problem and must abort the computation. \
+"Error! FMCartesianTensorDecomposition has encountered a fatal problem and must abort the computation. \
 The problem reads: `1`"
 
 Begin["`Package`"]
@@ -62,6 +66,7 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 		];
 
 		If[	FreeQ2[ex,vecs],
+			Message[FMCartesianTensorDecomposition::novecs];
 			Return[ex]
 		];
 
@@ -72,12 +77,20 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 		tmpUnc = FCLoopIsolate[tmp, vecs, Head -> projHead, FCI->True,
 			FeynAmpDenominatorSplit->False, DiracGammaExpand->False, DotSimplify->False, PaVe->False];
 
+		If[	j=!=0,
+			tmpUnc=FCSplit[tmpUnc,{projHead}][[2]]
+		];
+
 		FCPrint[1, "FMCartesianTensorDecomposition: After FCLoopIsolate: ", tmpUnc, FCDoControl->ctdVerbose];
 
 		If[	!FreeQ2[tmpUnc/. _projHead:>Unique[],vecs],
 			Message[FMCartesianTensorDecomposition::failmsg,"Failed to isolate all relevant vectors."];
-			Abort[];
+			Abort[]
+		];
 
+		If[ ((tmpUnc/. _projHead->0)=!=0) && (j=!=0),
+			Message[FMCartesianTensorDecomposition::failmsg,"The input expression is not linear in the given vectors."];
+			Abort[]
 		];
 
 		projList = Cases[tmpUnc+null1+null2, _projHead, Infinity]//DeleteDuplicates//Sort;
@@ -94,35 +107,44 @@ FMCartesianTensorDecomposition[expr_, vecs_List, j:Except[_?OptionQ], OptionsPat
 			Abort[];
 		];
 
-		projListEval = projList /. CartesianPair -> CartesianPairContract /. CartesianPairContract -> CartesianPair //. projHead[CartesianPair[a__CartesianMomentum]^n_. b_.] :> CartesianPair[a]^n projHead[b] /.
-		projHead[]|projHead[1]->1;
+		(* Pull out vectors contracted with each other. *)
+		projListEval = projList /. CartesianPair -> CartesianPairContract /. CartesianPairContract -> CartesianPair //.
+			projHead[CartesianPair[a__CartesianMomentum]^n_. b_.] :> CartesianPair[a]^n projHead[b];
 
-		FCPrint[1, "FMCartesianTensorDecomposition: projListEval: ", projListEval, FCDoControl->ctdVerbose];
+		FCPrint[1, "FMCartesianTensorDecomposition: raw projListEval: ", projListEval, FCDoControl->ctdVerbose];
 
-		(*	If all the vectors are already contracted with each other
-			and we are not taking the J=0 projection, then all other projections give zero. *)
-		If[	j=!=0,
-			tmpUnc=FCSplit[tmpUnc,{projHead}][[2]]
+		(*
+			Terms with all vectors already contracted with each other must yield zero for any projection,
+			except for J=0.
+		*)
+
+		If[	TrueQ[j===0],
+				projListEval = projListEval /. projHead[]|projHead[1]->1,
+				projListEval = projListEval /. projHead[]|projHead[1]->0
 		];
 
+		If[	!FreeQ[projListEval,projHead],
 
-		Switch[ j,
-			0,
-				tensorProjRule = tensorProjRule0,
-			1,
-				tensorProjRule = tensorProjRule1,
-			2,
-				tensorProjRule = tensorProjRule2,
-			_,
-			Message[FMCartesianTensorDecomposition::failmsg,"Decompositions for J>2 are currently not implemented."];
-			Abort[]
+			Switch[ j,
+				0,
+					tensorProjRule = tensorProjRule0,
+				1,
+					tensorProjRule = tensorProjRule1,
+				2,
+					tensorProjRule = tensorProjRule2,
+				_,
+				Message[FMCartesianTensorDecomposition::failmsg,"Decompositions for J>2 are currently not implemented."];
+				Abort[]
+			];
+
+			projListEval = projListEval /. Dispatch[tensorProjRule]
 		];
 
-		projListEval = projListEval /. tensorProjRule;
+		FCPrint[3, "FMCartesianTensorDecomposition: projListEval after applying tensorProjRule: ", projListEval, FCDoControl->ctdVerbose];
 
 		finalRepRule = Thread[Rule[projList,projListEval]];
 
-		res = tmpUnc /. finalRepRule;
+		res = tmpUnc /. Dispatch[finalRepRule];
 
 		If[	OptionValue[Contract],
 			res = Contract[res,FCI->True]
