@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2020 Vladyslav Shtabovenko
+	Copyright (C) 2015-2021 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	pNRQCD Feynman rules										*)
@@ -86,29 +86,32 @@ Unprotect[SMP];
 		SubscriptBox["V", "B"];
 Protect[SMP];
 
-FeynCalc`Package`SymbolsWithExplicitOption = Join[FeynCalc`Package`SymbolsWithExplicitOption, {
+
+pNRQCDSymbolsWithExplicitOption[optsExplicit___]:= {
 	FMOctetGluonOctetVertex[xx__, op:OptionsPattern[]]  :>
-		FMOctetGluonOctetVertex[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
+		FMOctetGluonOctetVertex[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMOctetGluonOctetVertex]], op],
 
 	FMOctetGluonSingletVertex[xx__, op:OptionsPattern[]]  :>
-		FMOctetGluonSingletVertex[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
+		FMOctetGluonSingletVertex[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMOctetGluonSingletVertex]], op],
 
 	FMOctetGluonGluonOctetVertex[xx__, op:OptionsPattern[]]  :>
-		FMOctetGluonGluonOctetVertex[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
-
+		FMOctetGluonGluonOctetVertex[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMOctetGluonGluonOctetVertex]], op],
 
 	FMOctetGluonGluonSingletVertex[xx__, op:OptionsPattern[]]  :>
-		FMOctetGluonGluonSingletVertex[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
+		FMOctetGluonGluonSingletVertex[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMOctetGluonGluonSingletVertex]], op],
 
 	FMSingletPropagator[xx__, op:OptionsPattern[]]  :>
-		FMSingletPropagator[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
+		FMSingletPropagator[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMSingletPropagator]], op],
 
 	FMOctetPropagator[xx__, op:OptionsPattern[]]  :>
-		FMOctetPropagator[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]],
+		FMOctetPropagator[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMOctetPropagator]], op],
 
 	FMCoulombGaugeGluonPropagator[xx__, op:OptionsPattern[]]  :>
-		FMCoulombGaugeGluonPropagator[xx, Explicit->True,	Sequence@@FilterRules[{op}, Except[Explicit]]]
-}];
+		FMCoulombGaugeGluonPropagator[xx, Explicit -> True, Sequence@@FilterRules[{optsExplicit}, Options[FMCoulombGaugeGluonPropagator]], op]
+};
+
+
+FeynCalc`Package`RulesForSymbolsWithExplicitOption = Join[FeynCalc`Package`RulesForSymbolsWithExplicitOption, {pNRQCDSymbolsWithExplicitOption}];
 
 DeclareNonCommutative[FMKet];
 DeclareNonCommutative[FMBra];
