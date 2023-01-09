@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2014-2020 Vladyslav Shtabovenko
+	Copyright (C) 2014-2021 Vladyslav Shtabovenko
 *)
 
 (* :Summary:  Ga Ga -> Ga Ga, EH EFT, matching, 1-loop					*)

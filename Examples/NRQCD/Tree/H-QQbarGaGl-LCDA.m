@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2017-2020 Vladyslav Shtabovenko
+	Copyright (C) 2017-2021 Vladyslav Shtabovenko
 *)
 
 (* :Summary:  H -> Q Qbar Ga Gl, LCDA-NRQCD, matching, tree					*)
