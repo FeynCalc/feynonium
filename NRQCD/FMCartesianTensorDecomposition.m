@@ -4,7 +4,7 @@
 
 (*
 	This software is covered by the GNU General Public License 3.
-	Copyright (C) 2015-2021 Vladyslav Shtabovenko
+	Copyright (C) 2015-2023 Vladyslav Shtabovenko
 *)
 
 (* :Summary:	Projects different J values out of Cartesian tensors		*)
